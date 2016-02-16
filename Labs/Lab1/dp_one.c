@@ -10,8 +10,10 @@
 #include <errno.h>
 #include <unistd.h> /* for sleep */
 
+/* number of philosophers */
 #define NUMP 5
 
+/* list of mutexes (forks) */
 pthread_mutex_t fork_mutex[NUMP];
 
 int main()
@@ -33,6 +35,7 @@ int main()
     pthread_exit(0);
 }
 
+/* create thread */
 void *diner(int *i)
 {
     int v;
@@ -42,16 +45,16 @@ void *diner(int *i)
     while (eating < 5)
     {
         printf("%d is thinking\n", v);
-        sleep(v/2);
+        sleep(v / 2);
         printf("%d is hungry\n", v);
-        pthread_mutex_lock(&fork_mutex[v]);
-        pthread_mutex_lock(&fork_mutex[(v + 1) % NUMP]);
+        pthread_mutex_lock(&fork_mutex[v]); /* take left fork */
+        pthread_mutex_lock(&fork_mutex[(v + 1) % NUMP]); /* take right fork */
         printf("%d is eating\n", v);
         eating++;
         sleep(1);
         printf("%d is done eating\n", v);
-        pthread_mutex_unlock(&fork_mutex[v]);
-        pthread_mutex_unlock(&fork_mutex[(v + 1) % NUMP]);
+        pthread_mutex_unlock(&fork_mutex[v]); /* put left fork */
+        pthread_mutex_unlock(&fork_mutex[(v + 1) % NUMP]); /* put right fork */
     }
     pthread_exit(NULL);
 }
