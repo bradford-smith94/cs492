@@ -1,0 +1,6 @@
+##C/C++ objects
+*.o
+
+##archives
+*.zip
+*.tar.gz
