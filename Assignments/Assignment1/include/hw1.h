@@ -15,6 +15,8 @@
 #include <pthread.h>
 #include <time.h>
 
+#define PRODUCT_MAX_LIFE 1024
+
 struct s_product
 {
     int id;
@@ -22,6 +24,16 @@ struct s_product
     int life; /* capped at 1024 */
 };
 
-int main(int argc, char** argv);
+struct s_env
+{
+    unsigned int seed;
+    int productCount;
+    int maxProductCount;
+} gl_env;
+
+int                 main(int argc, char** argv);
+struct s_product*   produceProduct();
+void*               producer();
+void*               consumer();
 
 #endif /* _HW1_H_ */
