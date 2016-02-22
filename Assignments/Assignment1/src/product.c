@@ -8,7 +8,8 @@
 
 /* pre: none
  * post: allocates and initializes a new product
- * return: a pointer to a newly allocated and initialize product
+ * return: a pointer to a newly allocated and initialized product or NULL if
+ *      malloc fails
  */
 struct s_product* produceProduct()
 {
@@ -16,10 +17,14 @@ struct s_product* produceProduct()
 
     p = (struct s_product*)malloc(1*sizeof(struct s_product));
 
-    p->id = ++gl_env.productCount;
-    p->timestamp = time(NULL);
-    srandom(gl_env.seed);
-    p->life = random() % PRODUCT_MAX_LIFE; /* see hw1.h for PRODUCT_MAX_LIFE */
+    /* if malloc works initialize the product */
+    if (p != NULL)
+    {
+        p->id = ++gl_env.productCount;
+        p->timestamp = time(NULL);
+        srandom(gl_env.seed);
+        p->life = random() % PRODUCT_MAX_LIFE; /* see hw1.h for PRODUCT_MAX_LIFE */
+    }
 
     return p;
 }

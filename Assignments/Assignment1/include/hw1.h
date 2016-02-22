@@ -17,13 +17,15 @@
 
 #define PRODUCT_MAX_LIFE 1024
 
+/* a struct representing a product */
 struct s_product
 {
     int id;
     time_t timestamp;
-    int life; /* capped at 1024 */
+    int life; /* capped at PRODUCT_MAX_LIFE */
 };
 
+/* a struct wrapping global variables together */
 struct s_env
 {
     unsigned int seed;
@@ -31,6 +33,8 @@ struct s_env
     int maxProductCount;
 } gl_env;
 
+
+/* defined methods */
 int                 main(int argc, char** argv);
 struct s_product*   produceProduct();
 void*               producer();
