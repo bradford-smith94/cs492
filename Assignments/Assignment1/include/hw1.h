@@ -15,15 +15,10 @@
 #include <pthread.h>
 #include <time.h>
 
-#define PRODUCT_MAX_LIFE 1024
+#include "product.h" /* provides definition of product */
+#include "q.h" /* provides a "queue" */
 
-/* a struct representing a product */
-struct s_product
-{
-    int id;
-    time_t timestamp;
-    int life; /* capped at PRODUCT_MAX_LIFE */
-};
+#define PRODUCT_MAX_LIFE 1024
 
 /* a struct wrapping global variables together */
 struct s_env
