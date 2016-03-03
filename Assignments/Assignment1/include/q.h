@@ -16,7 +16,7 @@
 #include "product.h"
 
 void init_q(int);
-void push_q(struct product);
-struct product* pop_q();
+void push_q(struct s_product*);
+struct s_product* pop_q();
 
 #endif /* _Q_H_ */
