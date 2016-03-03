@@ -25,11 +25,12 @@ int main(int argc, char** argv)
     int qSize;
     int scheduling;
     int quantum;
+    int i;
 
     /* validate arguments */
-    if (argc != 7)
+    if (argc != 8)
     {
-        printf("usage: %s <p1> <p2> <p3> <p3> <p4> <p5> <p6> <p7>\n", argv[0]);
+        printf("usage: %s <p1> <p2> <p3> <p4> <p5> <p6> <p7>\n", argv[0]);
         printf("\twhere:\n\tp1: the number of producer threads\n\
 \tp2: the number of consumer threads\n\
 \tp3: the total number of products to produce\n\
@@ -68,6 +69,34 @@ int main(int argc, char** argv)
 
     gl_env.seed = atoi(argv[7]);
 
+    /* initialize queue */
+    init_q(qSize);
+    pthread_t producers[numProducers];
+    int pNums[numProducers];
+    pthread_t consumers[numConsumers];
+    int cNums[numConsumers];
+
+    /* create producers */
+    for (i = 0; i < numProducers; i++)
+    {
+        pNums[i] = i + 1;
+        pthread_create(&producers[i], NULL, &producer, (void*) &pNums[i]);
+    }
+
+    /* create consumers */
+    for (i = 0; i < numConsumers; i++)
+    {
+        cNums[i] = i + 1;
+        pthread_create(&consumers[i], NULL, &consumer, (void*) &cNums[i]);
+    }
+
+    /* join producers */
+    for (i = 0; i < numProducers; i++)
+        pthread_join(producers[i], NULL);
+
+    /* join consumers */
+    for (i = 0; i < numConsumers; i++)
+        pthread_join(consumers[i], NULL);
 
     return 0;
 }

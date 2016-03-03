@@ -1,12 +1,26 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 1 consumer.c
- * 02/22/2016
+ * 03/03/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
 #include "hw1.h"
 
-void* consumer()
+/* pre: takes in a void* 'n' which must be a pointer to an integer
+ * post: creates a consumer thread
+ */
+void* consumer(void *n)
 {
+    int number;
+
+    number = *((int*)n);
+
+#ifdef DEBUG
+    printf("[DEBUG]\tStarting consumer [%d]\n", number);
+    fflush(stdout);
+#endif
+
+    /* return NULL removes compiler warning */
+    return NULL;
 }
 

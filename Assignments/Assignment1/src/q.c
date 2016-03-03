@@ -79,7 +79,7 @@ struct s_product* pop_q()
         ret = tmp->p;
         q = tmp->next;
 
-        free(&tmp);
+        free(tmp);
 
         if (count-- == maxSize)
             pthread_cond_broadcast(&q_full);

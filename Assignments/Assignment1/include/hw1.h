@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 1 hw1.h
- * 02/21/2016
+ * 03/03/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -32,7 +32,7 @@ struct s_env
 /* defined methods */
 int                 main(int argc, char** argv);
 struct s_product*   produceProduct();
-void*               producer();
-void*               consumer();
+void*               producer(void*);
+void*               consumer(void*);
 
 #endif /* _HW1_H_ */

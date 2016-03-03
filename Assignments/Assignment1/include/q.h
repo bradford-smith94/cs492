@@ -15,8 +15,9 @@
 
 #include "product.h"
 
-void init_q(int);
-void push_q(struct s_product*);
-struct s_product* pop_q();
+/* queue functions */
+void                init_q(int);
+void                push_q(struct s_product*);
+struct s_product*   pop_q();
 
 #endif /* _Q_H_ */
