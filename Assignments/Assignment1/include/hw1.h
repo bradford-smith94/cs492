@@ -18,15 +18,13 @@
 #include "product.h" /* provides definition of product */
 #include "q.h" /* provides a "queue" */
 
-#define PRODUCT_MAX_LIFE 1024
-
 /* a struct wrapping global variables together */
 struct s_env
 {
     unsigned int seed;
     int productCount;
     int maxProductCount;
-} gl_env;
+} gl_env; /* accessed through gl_env */
 
 
 /* defined methods */

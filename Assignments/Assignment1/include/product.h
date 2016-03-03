@@ -7,6 +7,8 @@
 #ifndef _PRODUCT_H_
 #define _PRODUCT_H_
 
+#define PRODUCT_MAX_LIFE 1024
+
 /* a struct representing a product */
 struct s_product
 {

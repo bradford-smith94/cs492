@@ -40,34 +40,55 @@ int main(int argc, char** argv)
 \tp7: the seed for the random number generator\n");
         return -1;
     }
+    else /* save parameters in variables and do error checking */
+    {
+        numProducers = atoi(argv[1]);
+        if (numProducers <= 0)
+        {
+            printf("[ERROR]\tInvalid number of procuder threads");
+            return -1;
+        }
 
-    /* save parameters in variables and do error checking */
-    numProducers = atoi(argv[1]);
-    if (numProducers <= 0)
-        printf("[ERROR]\tInvalid number of procuder threads");
+        numConsumers = atoi(argv[2]);
+        if (numConsumers <= 0)
+        {
+            printf("[ERROR]\tInvalid numer of consumer threads");
+            return -1;
+        }
 
-    numConsumers = atoi(argv[2]);
-    if (numConsumers <= 0)
-        printf("[ERROR]\tInvalid numer of consumer threads");
+        gl_env.maxProductCount = atoi(argv[3]);
+        if (gl_env.maxProductCount <= 0)
+        {
+            printf("[ERROR]\tInvalid number of products");
+            return -1;
+        }
+        gl_env.productCount = 0;
 
-    gl_env.maxProductCount = atoi(argv[3]);
-    if (gl_env.maxProductCount <= 0)
-        printf("[ERROR]\tInvalid number of products");
-    gl_env.productCount = 0;
+        qSize = atoi(argv[4]);
+        if (qSize < 0)
+        {
+            printf("[ERROR]\tInvalid queue size");
+            return -1;
+        }
 
-    qSize = atoi(argv[4]);
-    if (qSize < 0)
-        printf("[ERROR]\tInvalid queue size");
+        scheduling = atoi(argv[5]);
+        if (scheduling != 0 && scheduling != 1)
+        {
+            printf("[ERROR]\tInvalid value for scheduling algorithm");
+            return -1;
+        }
 
-    scheduling = atoi(argv[5]);
-    if (scheduling != 0 && scheduling != 1)
-        printf("[ERROR]\tInvalid value for scheduling algorithm");
+        quantum = atoi(argv[6]);
+        /* quantum is only important for Round-Robin */
+        if (quantum <= 0 && scheduling == 1)
+        {
+            printf("[ERROR]\tInvalid value for Round-Robin quantum");
+            return -1;
+        }
 
-    quantum = atoi(argv[6]);
-    if (quantum <= 0 && scheduling == 1) /* quantum is only important for RR */
-        printf("[ERROR]\tInvalid value for Round-Robin quantum");
-
-    gl_env.seed = atoi(argv[7]);
+        gl_env.seed = atoi(argv[7]);
+        /* who am I to say what a correct RNG seed is? */
+    }
 
     /* initialize queue */
     init_q(qSize);
