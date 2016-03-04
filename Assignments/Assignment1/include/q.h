@@ -19,5 +19,8 @@
 void                init_q(int);
 void                push_q(struct s_product*);
 struct s_product*   pop_q();
+struct s_product*   reserved_pop_q();
+void                replace_push_q(struct s_product*);
+void                decrement_q();
 
 #endif /* _Q_H_ */

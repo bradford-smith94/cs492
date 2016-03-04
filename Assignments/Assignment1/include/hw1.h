@@ -22,8 +22,10 @@
 struct s_env
 {
     int productCount;
+    int consumptionCount;
     int maxProductCount;
     pthread_mutex_t create_prod_lock;
+    pthread_mutex_t consume_prod_lock;
 } gl_env; /* accessed through gl_env */
 
 

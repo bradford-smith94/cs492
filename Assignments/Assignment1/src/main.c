@@ -94,6 +94,8 @@ int main(int argc, char** argv)
     /* initialize queue */
     if (qSize == 0)
         qSize = gl_env.maxProductCount;
+    gl_env.productCount = 0;
+    gl_env.consumptionCount = 0;
     init_q(qSize);
 
     /* initialize ptheads (these have to be here becuase we didn't know their
@@ -106,6 +108,9 @@ int main(int argc, char** argv)
 
     /* producers will grab this lock before producing a product */
     pthread_mutex_init(&gl_env.create_prod_lock, NULL);
+
+    /* consumers will grabe this lock before updating the consumptionCount */
+    pthread_mutex_init(&gl_env.consume_prod_lock, NULL);
 
     /* seed the RNG */
     srandom(seed);

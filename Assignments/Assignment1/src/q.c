@@ -89,3 +89,69 @@ struct s_product* pop_q()
     return ret;
 }
 
+/* pre: the queue has been initialized
+ * post: pops the queue without decrementing it's size
+ * return: a struct s_product* which is the product that was just removed from
+ *      the queue, or NULL if the queue was empty
+ */
+struct s_product* reserved_pop_q()
+{
+    struct s_product *ret = NULL;
+    struct q_entry_t *tmp;
+
+    pthread_mutex_lock(&q_lock);
+    if (q != NULL)
+    {
+        tmp = q;
+        ret = tmp->p;
+        q = tmp->next;
+
+        free(tmp);
+    }
+    pthread_mutex_unlock(&q_lock);
+
+    return ret;
+}
+
+/* pre: the q has been initialized, takes in a struct s_product* 'prod'
+ * post: pushes 'prod' onto the queue wihtout incrementing it's size, meant for
+ *      use after a 'reserved_pop_q'
+ */
+void replace_push_q(struct s_product* prod)
+{
+    struct q_entry_t *newEntry;
+    struct q_entry_t *tmp;
+
+    newEntry = malloc(sizeof(struct q_entry_t));
+    if (prod == NULL || newEntry == NULL)
+        return;
+
+    newEntry->p = prod;
+    newEntry->next = NULL;
+
+    pthread_mutex_lock(&q_lock);
+    if (q == NULL)
+        q = newEntry;
+    else
+    {
+        tmp = q;
+        while (tmp->next != NULL)
+            tmp = tmp->next;
+        tmp->next = newEntry;
+    }
+    pthread_mutex_unlock(&q_lock);
+}
+
+/* pre: the queue has been initialized and a 'reserved_pop_q' has been done
+ *      without being followed by a 'replace_push_q'
+ * post: decrements the queue's size and broadcasts to threads that may be
+ *      waiting on a full queue
+ */
+void decrement_q()
+{
+    pthread_mutex_lock(&q_lock);
+    if (count-- == maxSize)
+        pthread_cond_broadcast(&q_full);
+    pthread_mutex_unlock(&q_lock);
+}
+
