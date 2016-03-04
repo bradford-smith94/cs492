@@ -62,7 +62,7 @@ void push_q(struct s_product* prod)
             tmp = tmp->next;
         tmp->next = newEntry;
     }
-    newEntry->p->time_inserted = time(NULL);
+    gettimeofday(&(newEntry->p->time_inserted), NULL);
     if (count++ == 0)
         pthread_cond_broadcast(&q_empty);
     ++realCount;
@@ -155,7 +155,7 @@ void replace_push_q(struct s_product* prod)
             tmp = tmp->next;
         tmp->next = newEntry;
     }
-    newEntry->p->time_inserted = time(NULL);
+    gettimeofday(&(newEntry->p->time_inserted), NULL);
     if (realCount++ == 0)
         pthread_cond_broadcast(&q_empty);
     pthread_mutex_unlock(&q_lock);

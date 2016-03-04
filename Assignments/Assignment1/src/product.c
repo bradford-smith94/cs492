@@ -21,12 +21,12 @@ struct s_product* produceProduct()
     if (p != NULL)
     {
         p->id = ++gl_env.productCount;
-        p->timestamp = time(NULL);
+        gettimeofday(&(p->time_created), NULL);
         p->life = random() % PRODUCT_MAX_LIFE; /* see product.h for PRODUCT_MAX_LIFE */
 #ifdef DEBUG
-        printf("[DEBUG]\tCreated Product [%d] time: %li life: %d\n",
+        printf("[DEBUG]\tCreated Product [%d] time: %lu life: %d\n",
                 p->id,
-                p->timestamp,
+                p->time_created,
                 p->life);
         fflush(stdout);
 #endif

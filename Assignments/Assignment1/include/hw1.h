@@ -13,7 +13,7 @@
 #include <string.h>
 
 #include <pthread.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include "product.h" /* provides definition of product */
 #include "q.h" /* provides a "queue" */

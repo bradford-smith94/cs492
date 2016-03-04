@@ -13,8 +13,8 @@
 struct s_product
 {
     int id;
-    time_t timestamp;
-    time_t time_inserted;
+    struct timeval time_created;
+    struct timeval time_inserted;
     int life; /* capped at PRODUCT_MAX_LIFE */
 };
 

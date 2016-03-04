@@ -25,7 +25,12 @@ int main(int argc, char** argv)
     int qSize;
     unsigned int seed;
     int i;
-    time_t start;
+    struct timeval start;
+    struct timeval end;
+    struct timeval producer_start;
+    struct timeval producer_end;
+    struct timeval consumer_start;
+    struct timeval consumer_end;
 
     /* validate arguments */
     if (argc != 8)
@@ -115,9 +120,10 @@ int main(int argc, char** argv)
     srandom(seed);
 
     /* start timer */
-    start = time(NULL);
+    gettimeofday(&start, NULL);
 
     /* create producers */
+    gettimeofday(&producer_start, NULL);
     for (i = 0; i < numProducers; i++)
     {
         pNums[i] = i + 1;
@@ -125,6 +131,7 @@ int main(int argc, char** argv)
     }
 
     /* create consumers */
+    gettimeofday(&consumer_start, NULL);
     for (i = 0; i < numConsumers; i++)
     {
         cNums[i] = i + 1;
@@ -134,12 +141,18 @@ int main(int argc, char** argv)
     /* join producers */
     for (i = 0; i < numProducers; i++)
         pthread_join(producers[i], NULL);
+    gettimeofday(&producer_end, NULL);
 
     /* join consumers */
     for (i = 0; i < numConsumers; i++)
         pthread_join(consumers[i], NULL);
 
-    fprintf(stderr, "Total time: %li\n", time(NULL) - start);
+    gettimeofday(&consumer_end, NULL);
+    gettimeofday(&end, NULL);
+
+    fprintf(stderr, "Producer throughput %lu\n", (gl_env.maxProductCount / (producer_end.tv_sec - producer_start.tv_sec)) * 60);
+    fprintf(stderr, "Consumer throughput %lu\n", (gl_env.maxProductCount / (consumer_end.tv_sec - consumer_start.tv_sec)) * 60);
+    fprintf(stderr, "Total time: %lu\n", end.tv_usec - start.tv_usec);
     fflush(stderr);
     return 0;
 }

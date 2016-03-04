@@ -14,6 +14,7 @@ void* consumer(void *n)
     int number;
     int i;
     struct s_product* prod;
+    struct timeval end_time;
 
     number = *((int*)n);
 
@@ -38,7 +39,8 @@ void* consumer(void *n)
         {
             /* do a real pop and keep it til' it's gone */
             prod = pop_q();
-            fprintf(stderr, "Product %d waited %li\n", prod->id, time(NULL) - prod->time_inserted);
+            gettimeofday(&end_time, NULL);
+            fprintf(stderr, "Product %d waited %lu\n", prod->id, end_time.tv_usec - prod->time_inserted.tv_usec);
             fflush(stderr);
 
 #ifdef DEBUG
@@ -56,7 +58,8 @@ void* consumer(void *n)
 
             printf("Consumer %d has consumed product %d\n", number, prod->id);
             fflush(stdout);
-            fprintf(stderr, "Product %d turn-around %li\n", prod->id, time(NULL) - prod->timestamp);
+            gettimeofday(&end_time, NULL);
+            fprintf(stderr, "Product %d turn-around %lu\n", prod->id, end_time.tv_usec - prod->time_created.tv_usec);
             fflush(stderr);
 
             /* free memory */
@@ -66,7 +69,8 @@ void* consumer(void *n)
         {
             /* do a "reserved" pop in case we need to put it back */
             prod = reserved_pop_q();
-            fprintf(stderr, "Product %d waited %li\n", prod->id, time(NULL) - prod->time_inserted);
+            gettimeofday(&end_time, NULL);
+            fprintf(stderr, "Product %d waited %lu\n", prod->id, end_time.tv_usec - prod->time_inserted.tv_usec);
             fflush(stderr);
 
 #ifdef DEBUG
@@ -100,7 +104,8 @@ void* consumer(void *n)
 
                 printf("Consumer %d has consumed product %d\n", number, prod->id);
                 fflush(stdout);
-                fprintf(stderr, "Product %d turn-around %li\n", prod->id, time(NULL) - prod->timestamp);
+                gettimeofday(&end_time, NULL);
+                fprintf(stderr, "Product %d turn-around %lu\n", prod->id, end_time.tv_usec - prod->time_created.tv_usec);
                 fflush(stderr);
 
                 /* free memory */
