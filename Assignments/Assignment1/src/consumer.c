@@ -39,6 +39,11 @@ void* consumer(void *n)
             /* do a real pop and keep it til' it's gone */
             prod = pop_q();
 
+#ifdef DEBUG
+            printf("[DEBUG]\tConsumer [%d] working on product [%d]\n", number, prod->id);
+            fflush(stdout);
+#endif
+
             for (i = 0; i < prod->life; i++)
                 fibonacci(10);
 
@@ -58,10 +63,18 @@ void* consumer(void *n)
             /* do a "reserved" pop in case we need to put it back */
             prod = reserved_pop_q();
 
+#ifdef DEBUG
+            printf("[DEBUG]\tConsumer [%d] working on product [%d]\n", number, prod->id);
+            fflush(stdout);
+#endif
+
             if (prod->life >= gl_env.quantum)
             {
                 for (i = 0; i < gl_env.quantum; i++)
                     fibonacci(10);
+
+                /* update the product's life */
+                prod->life = prod->life - gl_env.quantum;
 
                 /* put the product back */
                 replace_push_q(prod);

@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith9)
  * CS 492 Assignment 1 q.c
- * 03/03/2016
+ * 03/04/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -12,12 +12,13 @@ struct q_entry_t {
     struct q_entry_t *next;
 };
 
-static pthread_mutex_t q_lock;
-static pthread_cond_t q_full;
-static pthread_cond_t q_empty;
-static int maxSize;
-static int count;
-static struct q_entry_t *q;
+static pthread_mutex_t q_lock; /* lock for accessing the queue */
+static pthread_cond_t q_full; /* condition for when the queue is full */
+static pthread_cond_t q_empty; /* condition for when the queue is empty */
+static int maxSize; /* the max size of the queue */
+static int count; /* number of items in the queue (accounting for reserved spaces) */
+static int realCount; /* number of items in the queue (not accounting for reserved spaces) */
+static struct q_entry_t *q; /* a queue 'node' */
 
 /* pre: takes in a positive integer 'size'
  * post: intializes a queue of size 'size'
@@ -29,6 +30,7 @@ void init_q(int size)
     pthread_cond_init(&q_empty, NULL);
     maxSize = size;
     count = 0;
+    realCount = 0;
     q = NULL;
 }
 
@@ -60,8 +62,9 @@ void push_q(struct s_product* prod)
             tmp = tmp->next;
         tmp->next = newEntry;
     }
-    ++count;
-    pthread_cond_broadcast(&q_empty);
+    if (count++ == 0)
+        pthread_cond_broadcast(&q_empty);
+    ++realCount;
     pthread_mutex_unlock(&q_lock);
 }
 
@@ -76,7 +79,7 @@ struct s_product* pop_q()
     struct q_entry_t *tmp;
 
     pthread_mutex_lock(&q_lock);
-    while (count == 0)
+    while (realCount == 0)
         pthread_cond_wait(&q_empty, &q_lock);
 
     if (q != NULL)
@@ -89,6 +92,7 @@ struct s_product* pop_q()
 
         if (count-- == maxSize)
             pthread_cond_broadcast(&q_full);
+        --realCount;
     }
     pthread_mutex_unlock(&q_lock);
 
@@ -106,7 +110,7 @@ struct s_product* reserved_pop_q()
     struct q_entry_t *tmp;
 
     pthread_mutex_lock(&q_lock);
-    while (count == 0)
+    while (realCount == 0)
         pthread_cond_wait(&q_empty, &q_lock);
 
     if (q != NULL)
@@ -116,6 +120,8 @@ struct s_product* reserved_pop_q()
         q = tmp->next;
 
         free(tmp);
+
+        --realCount;
     }
     pthread_mutex_unlock(&q_lock);
 
@@ -148,6 +154,8 @@ void replace_push_q(struct s_product* prod)
             tmp = tmp->next;
         tmp->next = newEntry;
     }
+    if (realCount++ == 0)
+        pthread_cond_broadcast(&q_empty);
     pthread_mutex_unlock(&q_lock);
 }
 
