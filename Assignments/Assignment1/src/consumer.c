@@ -32,6 +32,7 @@ void* consumer(void *n)
             pthread_mutex_unlock(&gl_env.consume_prod_lock);
             break;
         }
+        pthread_mutex_unlock(&gl_env.consume_prod_lock);
 
         if (gl_env.scheduling == FCFS)
         {
