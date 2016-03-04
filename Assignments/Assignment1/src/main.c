@@ -25,6 +25,7 @@ int main(int argc, char** argv)
     int qSize;
     unsigned int seed;
     int i;
+    time_t start;
 
     /* validate arguments */
     if (argc != 8)
@@ -113,6 +114,9 @@ int main(int argc, char** argv)
     /* seed the RNG */
     srandom(seed);
 
+    /* start timer */
+    start = time(NULL);
+
     /* create producers */
     for (i = 0; i < numProducers; i++)
     {
@@ -135,6 +139,8 @@ int main(int argc, char** argv)
     for (i = 0; i < numConsumers; i++)
         pthread_join(consumers[i], NULL);
 
+    fprintf(stderr, "Total time: %li\n", time(NULL) - start);
+    fflush(stderr);
     return 0;
 }
 

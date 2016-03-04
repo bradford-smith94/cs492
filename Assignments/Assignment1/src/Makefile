@@ -36,8 +36,13 @@ clean:
 
 fclean: clean
 	$(RM) $(PRG)
+	$(RM) ../rr_raw_analytics.txt
+	$(RM) ../fcfs_raw_analytics.txt
 
 re: fclean all
+
+analytics: re
+	./runAnalytics.sh
 
 tex:
 	$(TEX) -output-directory=.. $(LATEX)

@@ -38,6 +38,8 @@ void* consumer(void *n)
         {
             /* do a real pop and keep it til' it's gone */
             prod = pop_q();
+            fprintf(stderr, "Product %d waited %li\n", prod->id, time(NULL) - prod->time_inserted);
+            fflush(stderr);
 
 #ifdef DEBUG
             printf("[DEBUG]\tConsumer [%d] working on product [%d]\n", number, prod->id);
@@ -54,6 +56,8 @@ void* consumer(void *n)
 
             printf("Consumer %d has consumed product %d\n", number, prod->id);
             fflush(stdout);
+            fprintf(stderr, "Product %d turn-around %li\n", prod->id, time(NULL) - prod->timestamp);
+            fflush(stderr);
 
             /* free memory */
             free(prod);
@@ -62,6 +66,8 @@ void* consumer(void *n)
         {
             /* do a "reserved" pop in case we need to put it back */
             prod = reserved_pop_q();
+            fprintf(stderr, "Product %d waited %li\n", prod->id, time(NULL) - prod->time_inserted);
+            fflush(stderr);
 
 #ifdef DEBUG
             printf("[DEBUG]\tConsumer [%d] working on product [%d]\n", number, prod->id);
@@ -94,6 +100,8 @@ void* consumer(void *n)
 
                 printf("Consumer %d has consumed product %d\n", number, prod->id);
                 fflush(stdout);
+                fprintf(stderr, "Product %d turn-around %li\n", prod->id, time(NULL) - prod->timestamp);
+                fflush(stderr);
 
                 /* free memory */
                 free(prod);
