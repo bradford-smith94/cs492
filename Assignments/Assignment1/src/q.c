@@ -14,6 +14,7 @@ struct q_entry_t {
 
 static pthread_mutex_t q_lock;
 static pthread_cond_t q_full;
+static pthread_cond_t q_empty;
 static int maxSize;
 static int count;
 static struct q_entry_t *q;
@@ -25,6 +26,7 @@ void init_q(int size)
 {
     pthread_mutex_init(&q_lock, NULL);
     pthread_cond_init(&q_full, NULL);
+    pthread_cond_init(&q_empty, NULL);
     maxSize = size;
     count = 0;
     q = NULL;
@@ -59,6 +61,7 @@ void push_q(struct s_product* prod)
         tmp->next = newEntry;
     }
     ++count;
+    pthread_cond_broadcast(&q_empty);
     pthread_mutex_unlock(&q_lock);
 }
 
@@ -73,6 +76,9 @@ struct s_product* pop_q()
     struct q_entry_t *tmp;
 
     pthread_mutex_lock(&q_lock);
+    while (count == 0)
+        pthread_cond_wait(&q_empty, &q_lock);
+
     if (q != NULL)
     {
         tmp = q;
@@ -100,6 +106,9 @@ struct s_product* reserved_pop_q()
     struct q_entry_t *tmp;
 
     pthread_mutex_lock(&q_lock);
+    while (count == 0)
+        pthread_cond_wait(&q_empty, &q_lock);
+
     if (q != NULL)
     {
         tmp = q;

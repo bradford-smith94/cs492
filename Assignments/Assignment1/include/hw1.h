@@ -18,12 +18,17 @@
 #include "product.h" /* provides definition of product */
 #include "q.h" /* provides a "queue" */
 
+#define RR 1
+#define FCFS 0
+
 /* a struct wrapping global variables together */
 struct s_env
 {
     int productCount;
     int consumptionCount;
     int maxProductCount;
+    int scheduling;
+    int quantum;
     pthread_mutex_t create_prod_lock;
     pthread_mutex_t consume_prod_lock;
 } gl_env; /* accessed through gl_env */
@@ -34,5 +39,6 @@ int                 main(int argc, char** argv);
 struct s_product*   produceProduct();
 void*               producer(void*);
 void*               consumer(void*);
+int                 fibonacci(int);
 
 #endif /* _HW1_H_ */

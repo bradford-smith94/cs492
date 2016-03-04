@@ -7,7 +7,7 @@
 PRG=hw1
 AUTHOR=bsmith8
 PROJECT=cs492-assignment1
-SRC=main.c q.c producer.c product.c consumer.c
+SRC=main.c q.c fib.c producer.c product.c consumer.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
 RM=rm -f

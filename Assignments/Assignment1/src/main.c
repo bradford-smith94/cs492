@@ -23,8 +23,6 @@ int main(int argc, char** argv)
     int numProducers;
     int numConsumers;
     int qSize;
-    int scheduling;
-    int quantum;
     unsigned int seed;
     int i;
 
@@ -72,16 +70,16 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        scheduling = atoi(argv[5]);
-        if (scheduling != 0 && scheduling != 1)
+        gl_env.scheduling = atoi(argv[5]);
+        if (gl_env.scheduling != RR && gl_env.scheduling != FCFS)
         {
             printf("[ERROR]\tInvalid value for scheduling algorithm");
             return -1;
         }
 
-        quantum = atoi(argv[6]);
+        gl_env.quantum = atoi(argv[6]);
         /* quantum is only important for Round-Robin */
-        if (quantum <= 0 && scheduling == 1)
+        if (gl_env.quantum <= 0 && gl_env.scheduling == RR)
         {
             printf("[ERROR]\tInvalid value for Round-Robin quantum");
             return -1;
