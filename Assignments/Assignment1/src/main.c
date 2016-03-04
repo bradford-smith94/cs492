@@ -152,7 +152,7 @@ int main(int argc, char** argv)
 
     fprintf(stderr, "Producer throughput %lu\n", (gl_env.maxProductCount / (producer_end.tv_sec - producer_start.tv_sec)) * 60);
     fprintf(stderr, "Consumer throughput %lu\n", (gl_env.maxProductCount / (consumer_end.tv_sec - consumer_start.tv_sec)) * 60);
-    fprintf(stderr, "Total time: %lu\n", end.tv_usec - start.tv_usec);
+    fprintf(stderr, "Total time: %lu\n", end.tv_sec - start.tv_sec);
     fflush(stderr);
     return 0;
 }

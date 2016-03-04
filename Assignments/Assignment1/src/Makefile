@@ -36,8 +36,8 @@ clean:
 
 fclean: clean
 	$(RM) $(PRG)
-	$(RM) ../rr_raw_analytics.txt
-	$(RM) ../fcfs_raw_analytics.txt
+	$(RM) ../rr_*.txt
+	$(RM) ../fcfs_*.txt
 
 re: fclean all
 
