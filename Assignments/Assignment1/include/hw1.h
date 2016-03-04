@@ -21,9 +21,9 @@
 /* a struct wrapping global variables together */
 struct s_env
 {
-    unsigned int seed;
     int productCount;
     int maxProductCount;
+    pthread_mutex_t create_prod_lock;
 } gl_env; /* accessed through gl_env */
 
 

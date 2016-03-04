@@ -25,6 +25,7 @@ int main(int argc, char** argv)
     int qSize;
     int scheduling;
     int quantum;
+    unsigned int seed;
     int i;
 
     /* validate arguments */
@@ -86,16 +87,28 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        gl_env.seed = atoi(argv[7]);
+        seed = atoi(argv[7]);
         /* who am I to say what a correct RNG seed is? */
     }
 
     /* initialize queue */
+    if (qSize == 0)
+        qSize = gl_env.maxProductCount;
     init_q(qSize);
+
+    /* initialize ptheads (these have to be here becuase we didn't know their
+     * lengths until after parsing parameters)
+     */
     pthread_t producers[numProducers];
     int pNums[numProducers];
     pthread_t consumers[numConsumers];
     int cNums[numConsumers];
+
+    /* producers will grab this lock before producing a product */
+    pthread_mutex_init(&gl_env.create_prod_lock, NULL);
+
+    /* seed the RNG */
+    srandom(seed);
 
     /* create producers */
     for (i = 0; i < numProducers; i++)

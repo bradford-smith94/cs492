@@ -22,8 +22,14 @@ struct s_product* produceProduct()
     {
         p->id = ++gl_env.productCount;
         p->timestamp = time(NULL);
-        srandom(gl_env.seed);
-        p->life = random() % PRODUCT_MAX_LIFE; /* see hw1.h for PRODUCT_MAX_LIFE */
+        p->life = random() % PRODUCT_MAX_LIFE; /* see product.h for PRODUCT_MAX_LIFE */
+#ifdef DEBUG
+        printf("[DEBUG]\tCreated Product [%d] time: %li life: %d\n",
+                p->id,
+                p->timestamp,
+                p->life);
+        fflush(stdout);
+#endif
     }
 
     return p;
