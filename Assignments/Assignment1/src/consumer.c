@@ -41,13 +41,16 @@ void* consumer(void *n)
             for (i = 0; i < prod->life; i++)
                 fibonacci(10);
 
-            /* free memory */
-            free(prod);
-
             /* lock and increment consumptionCount */
             pthread_mutex_lock(&gl_env.consume_prod_lock);
             gl_env.consumptionCount++;
             pthread_mutex_unlock(&gl_env.consume_prod_lock);
+
+            printf("Consumer %d has consumed product %d\n", number, prod->id);
+            fflush(stdout);
+
+            /* free memory */
+            free(prod);
         }
         else if (gl_env.scheduling == RR)
         {
@@ -70,13 +73,16 @@ void* consumer(void *n)
                 /* "fully" remove product */
                 decrement_q();
 
-                /* free memory */
-                free(prod);
-
                 /* lock and increment consumptionCount */
                 pthread_mutex_lock(&gl_env.consume_prod_lock);
                 gl_env.consumptionCount++;
                 pthread_mutex_unlock(&gl_env.consume_prod_lock);
+
+                printf("Consumer %d has consumed product %d\n", number, prod->id);
+                fflush(stdout);
+
+                /* free memory */
+                free(prod);
             }
         }
 

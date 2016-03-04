@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 1 producer.c
- * 03/03/2016
+ * 03/04/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -45,6 +45,9 @@ void* producer(void *n)
 
         /* the queue handles critical sections itself */
         push_q(prod);
+
+        printf("Producer %d has produced product %d\n", number, prod->id);
+        fflush(stdout);
 
         /* usleep for 100 milliseconds */
         usleep(100000);
