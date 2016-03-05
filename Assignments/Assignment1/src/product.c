@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 1 product.c
- * 02/22/2016
+ * 03/04/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -26,7 +26,7 @@ struct s_product* produceProduct()
 #ifdef DEBUG
         printf("[DEBUG]\tCreated Product [%d] time: %lu life: %d\n",
                 p->id,
-                p->time_created,
+                p->time_created.tv_usec,
                 p->life);
         fflush(stdout);
 #endif

@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 1 main.c
- * 02/21/2016
+ * 03/04/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     /* producers will grab this lock before producing a product */
     pthread_mutex_init(&gl_env.create_prod_lock, NULL);
 
-    /* consumers will grabe this lock before updating the consumptionCount */
+    /* consumers will grab this lock before updating the consumptionCount */
     pthread_mutex_init(&gl_env.consume_prod_lock, NULL);
 
     /* seed the RNG */
