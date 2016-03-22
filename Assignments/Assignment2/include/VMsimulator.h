@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "page.h"
+
 /* maximum number of memory locations */
 #define MAX_MEM 512
 

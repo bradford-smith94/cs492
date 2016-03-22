@@ -7,7 +7,7 @@
 PRG=VMsimulator
 AUTHOR=bsmith8
 PROJECT=cs492-assignment2
-SRC=main.c
+SRC=main.c page_table.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
 RM=rm -f
@@ -19,7 +19,6 @@ LDFLAGS+=
 # C complied with: `$(CC) -c $(CPPFLAGS) $(CFLAGS)`
 CFLAGS+= $(INCLPATH)
 CPPFLAGS+= -pedantic-errors -Wall
-CXXFLAGS+=
 DBFLGS= -g -DDEBUG
 
 all: $(OBJ)
@@ -38,5 +37,5 @@ fclean: clean
 re: fclean all
 
 tar: fclean
-	tar -cvzf $(AUTHOR)_$(PROJECT).tar.gz ./*
+	tar -cvzf $(AUTHOR)_$(PROJECT).tar.gz ../*
 
