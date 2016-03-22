@@ -17,7 +17,7 @@ struct s_page
 {
     int number;
     int valid;
-    int accessed;
+    unsigned long accessed;
 };
 
 typedef struct s_page page;

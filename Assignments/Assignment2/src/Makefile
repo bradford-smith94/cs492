@@ -10,6 +10,9 @@ PROJECT=cs492-assignment2
 SRC=main.c page_table.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
+LATEX=../report.tex
+PDF=$(LATEX:.tex=.pdf)
+TEX=pdflatex -shell-escape -interaction=nonstopmode -file-line-error
 RM=rm -f
 INCLPATH=-I../include
 LIBPATH=
@@ -36,6 +39,16 @@ fclean: clean
 
 re: fclean all
 
-tar: fclean
+tex:
+	$(TEX) -output-directory=.. $(LATEX)
+
+texclean:
+	$(RM) ../*.aux
+	$(RM) ../*.log
+
+texfclean: texclean
+	$(RM) $(PDF)
+
+tar: fclean tex texclean
 	tar -cvzf $(AUTHOR)_$(PROJECT).tar.gz ../*
 
