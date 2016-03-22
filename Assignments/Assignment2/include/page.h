@@ -24,17 +24,19 @@ typedef struct s_page page;
 
 struct s_ptable
 {
-    page* pages;
+    page** pages;
+    int numPages;
 };
 
 typedef struct s_ptable ptable;
 
-unsigned int gl_total;
+/* global count of pages, so each page can be given a unique number */
+unsigned int gl_pages_total;
 
 /* declare functions */
 ptable* createPageTable(int, int);
 void deletePageTable(ptable*);
 
-void addPage(ptable*);
+int addPage(ptable*);
 
 #endif /* _PAGE_H_ */
