@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 2
-# 03/22/2016
+# 03/23/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -39,7 +39,13 @@ fclean: clean
 
 re: fclean all
 
-tex:
+test: debug
+	./$(PRG) ../plist ../ptrace 2 FIFO +
+
+plots: re
+	./plot.sh
+
+tex: plots
 	$(TEX) -output-directory=.. $(LATEX)
 
 texclean:

@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 03/22/2016
+ * 03/23/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -18,6 +18,7 @@ int main(int argc, char** argv)
     char* pageReplacement;
     int prePaging;
 
+    /* verifiy arguments */
     if (argc != 6)
     {
         printf("usage: %s <plist> <ptrace> <page size> <FIFO|LRU|Clock> <+|- pre-paging on/off>\n",
@@ -63,6 +64,11 @@ int main(int argc, char** argv)
 #endif
     }
 
+    /* initialize page swap counter to zero for start */
+    gl_page_swaps = 0;
+
+    /* print total number of page swaps on exit */
+    printf("Total page swaps: %lu\n", gl_page_swaps);
     return 0;
 }
 

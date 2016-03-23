@@ -23,9 +23,9 @@ CLOCK=""
 echo -n > $DATA
 for i in 1 2 4 8 16
 do
-    ./VMsimulator ../plist ../ptrace $i FIFO -
-    ./VMsimulator ../plist ../ptrace $i LRU -
-    ./VMsimulator ../plist ../ptrace $i Clock -
+    FIFO="$(./VMsimulator ../plist ../ptrace $i FIFO - | sed 's/[^0-9]*//g')"
+    LRU="$(./VMsimulator ../plist ../ptrace $i LRU - | sed 's/[^0-9]*//g')"
+    CLOCK="$(./VMsimulator ../plist ../ptrace $i Clock - | sed 's/[^0-9]*//g')"
     echo "${i} ${FIFO} ${LRU} ${CLOCK}" >> $DATA
 done
 
@@ -51,9 +51,9 @@ gnuplot $TEMP
 echo -n > $DATA
 for i in 1 2 4 8 16
 do
-    ./VMsimulator ../plist ../ptrace $i FIFO +
-    ./VMsimulator ../plist ../ptrace $i LRU +
-    ./VMsimulator ../plist ../ptrace $i Clock +
+    FIFO="$(./VMsimulator ../plist ../ptrace $i FIFO + | sed 's/[^0-9]*//g')"
+    LRU="$(./VMsimulator ../plist ../ptrace $i LRU + | sed 's/[^0-9]*//g')"
+    CLOCK="$(./VMsimulator ../plist ../ptrace $i Clock + | sed 's/[^0-9]*//g')"
     echo "${i} ${FIFO} ${LRU} ${CLOCK}" >> $DATA
 done
 
