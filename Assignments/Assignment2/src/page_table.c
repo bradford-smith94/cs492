@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page_table.c
- * 03/22/2016
+ * 03/23/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -40,13 +40,16 @@ void deletePageTable(ptable* p)
 {
     int i;
 
-    for (i = 0; i < p->numPages; i++)
+    if (p != NULL)
     {
-        if (p->pages[i] != NULL)
-            free(p->pages[i]);
+        for (i = 0; i < p->numPages; i++)
+        {
+            if (p->pages[i] != NULL)
+                free(p->pages[i]);
+        }
+        free(p->pages);
+        free(p);
     }
-    free(p->pages);
-    free(p);
 }
 
 /* pre: takes in a ptable* p
