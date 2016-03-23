@@ -45,6 +45,7 @@ tex:
 texclean:
 	$(RM) ../*.aux
 	$(RM) ../*.log
+	$(RM) ../*.png
 
 texfclean: texclean
 	$(RM) $(PDF)

@@ -32,7 +32,7 @@ int main(int argc, char** argv)
         pageSize = atoi(argv[3]);
         if (pageSize <= 0)
         {
-            printf("[ERROR]\tInvalid page size!\n");
+            printf("[ERROR]\tInvalid page size [%s]!\n", argv[3]);
             return 1;
         }
 

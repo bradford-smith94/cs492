@@ -21,6 +21,13 @@ CLOCK=""
 # Fill $DATA with FIFO,LRU and Clock results using demand paging for page sizes
 # 1, 2, 4, 8, and 16
 echo -n > $DATA
+for i in 1 2 4 8 16
+do
+    ./VMsimulator ../plist ../ptrace $i FIFO -
+    ./VMsimulator ../plist ../ptrace $i LRU -
+    ./VMsimulator ../plist ../ptrace $i Clock -
+    echo "${i} ${FIFO} ${LRU} ${CLOCK}" >> $DATA
+done
 
 # Create temporary gnuplot input file for demand paging plot
 echo -n > $TEMP
@@ -42,6 +49,13 @@ gnuplot $TEMP
 # Fill $DATA with FIFO,LRU and Clock results using pre-paging for page sizes
 # 1, 2, 4, 8, and 16
 echo -n > $DATA
+for i in 1 2 4 8 16
+do
+    ./VMsimulator ../plist ../ptrace $i FIFO +
+    ./VMsimulator ../plist ../ptrace $i LRU +
+    ./VMsimulator ../plist ../ptrace $i Clock +
+    echo "${i} ${FIFO} ${LRU} ${CLOCK}" >> $DATA
+done
 
 # Create temporary gnuplot input file for pre-paging plot
 echo -n > $TEMP
