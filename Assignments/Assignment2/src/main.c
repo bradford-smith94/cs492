@@ -12,20 +12,32 @@
  */
 int main(int argc, char** argv)
 {
+    /* parameters */
     char* plist;
     char* ptrace;
     int pageSize;
     char* pageReplacement;
     int prePaging;
 
-    /* verifiy arguments */
+    /* other variables */
+    FILE* plistfd;
+    FILE* ptracefd;
+    char c;
+    int numProcs;
+    int i;
+    ptable** proc_ptables;
+    char* line;
+    size_t len;
+    ssize_t ret;
+
+    /* verifiy number of arguments */
     if (argc != 6)
     {
         printf("usage: %s <plist> <ptrace> <page size> <FIFO|LRU|Clock> <+|- pre-paging on/off>\n",
                 argv[0]);
         return 1;
     }
-    else
+    else /* parse and error check arguments */
     {
         plist = argv[1];
         ptrace = argv[2];
@@ -66,6 +78,97 @@ int main(int argc, char** argv)
 
     /* initialize page swap counter to zero for start */
     gl_page_swaps = 0;
+
+    /* open files for reading */
+    plistfd = fopen(plist, "r");
+    if (plistfd == NULL)
+    {
+        printf("[ERROR]\tCould not open plist file!\n");
+        return 1;
+    }
+    ptracefd = fopen(ptrace, "r");
+    if (ptracefd == NULL)
+    {
+        printf("[ERROR]\tCould not open ptrace file!\n");
+        return 1;
+    }
+
+    /* read from plist to count the number of lines (processes) */
+    numProcs = 0;
+    i = 0;
+    while (!feof(plistfd))
+    {
+        c = fgetc(plistfd);
+        i++;
+        if (c == '\n')
+        {
+            if (i > 1)
+            {
+                i = 0;
+                numProcs++;
+            }
+        }
+    }
+
+#ifdef DEBUG
+    printf("[DEBUG]\t%d processes detected\n", numProcs);
+    fflush(stdout);
+#endif
+
+    /* create a list of page tables (one for each process) */
+    proc_ptables = (ptable**)malloc(sizeof(ptable*)*numProcs);
+
+    /* move the fd back to the start of the file so we can read it again */
+    rewind(plistfd);
+
+    /* read from plist again to setup proc_ptables */
+    i = 0;
+    line = NULL;
+    len = 0;
+    while ((ret = getline(&line, &len, plistfd)) != -1)
+    {
+        /* skip over all empty lines */
+        if (!strcmp(line, "\n"))
+            continue;
+
+#ifdef DEBUG
+        printf("[DEBUG]\tRead plist line: %s", line);
+        fflush(stdout);
+#endif
+
+        /* this returns the PID, next strtok will be the mem locs */
+        strtok(line, " ");
+        proc_ptables[i++] = createPageTable(pageSize, atoi(strtok(NULL, " ")));
+    }
+
+    /* read from ptrace and run the simulation */
+    free(line);
+    line = NULL;
+    len = 0;
+    while ((ret = getline(&line, &len, ptracefd)) != -1)
+    {
+        /* skip over all empty lines */
+        if (!strcmp(line, "\n"))
+            continue;
+
+#ifdef DEBUG
+        printf("[DEBUG]\tRead ptrace line: %s", line);
+        fflush(stdout);
+#endif
+
+        /* this returns the PID, next strtok will be the mem loc to access */
+        i = atoi(strtok(line, " "));
+    }
+
+
+    /* close files, ignoring any errors on close */
+    fclose(plistfd);
+    fclose(ptracefd);
+
+    /* free memory */
+    for (i = 0; i < numProcs; i++)
+        deletePageTable(proc_ptables[i]);
+    free(proc_ptables);
 
     /* print total number of page swaps on exit */
     printf("Total page swaps: %lu\n", gl_page_swaps);

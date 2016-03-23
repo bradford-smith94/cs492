@@ -17,6 +17,12 @@ ptable* createPageTable(int pSize, int pTotal)
     int i;
     int numPages = pTotal / pSize;
 
+#ifdef DEBUG
+    printf("[DEBUG]\tCreating page table: page size [%d] num mem locs [%d]\n",
+            pSize, pTotal);
+    fflush(stdout);
+#endif
+
     ret = (ptable*)malloc(sizeof(ptable));
     if (ret != NULL)
     {
