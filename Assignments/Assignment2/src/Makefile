@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 2
-# 03/23/2016
+# 03/24/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -10,7 +10,7 @@ PROJECT=cs492-assignment2
 SRC=main.c page_table.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
-LATEX=../report.tex
+LATEX=report.tex
 PDF=$(LATEX:.tex=.pdf)
 TEX=pdflatex -shell-escape -interaction=nonstopmode -file-line-error
 RM=rm -f
@@ -46,7 +46,7 @@ plots: re
 	./plot.sh
 
 tex: plots
-	$(TEX) -output-directory=.. $(LATEX)
+	cd .. && $(TEX) $(LATEX)
 
 texclean:
 	$(RM) ../*.aux
@@ -54,7 +54,7 @@ texclean:
 	$(RM) ../*.png
 
 texfclean: texclean
-	$(RM) $(PDF)
+	$(RM) ../$(PDF)
 
 tar: fclean tex texclean
 	tar -cvzf $(AUTHOR)_$(PROJECT).tar.gz ../*
