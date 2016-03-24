@@ -36,7 +36,6 @@ unsigned int gl_pages_total;
 /* declare functions */
 ptable* createPageTable(int, int);
 void deletePageTable(ptable*);
-
-int addPage(ptable*);
+page* createPage();
 
 #endif /* _PAGE_H_ */
