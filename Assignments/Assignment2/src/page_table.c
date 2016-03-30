@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page_table.c
- * 03/23/2016
+ * 03/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -31,6 +31,7 @@ ptable* createPageTable(int pSize, int pTotal)
         if (ret->pages != NULL)
         {
             ret->numPages = numPages;
+            ret->numLoaded = 0;
 
             for (i = 0; i < numPages; i++)
             {

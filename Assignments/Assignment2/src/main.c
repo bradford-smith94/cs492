@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 03/29/2016
+ * 03/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -120,6 +120,7 @@ int main(int argc, char** argv)
     fflush(stdout);
 #endif
 
+    /* skip over everything if we have zero or less processes */
     if (numProcs > 0)
     {
         /* create a list of page tables (one for each process) */
@@ -160,8 +161,13 @@ int main(int argc, char** argv)
 
         /* for each program set the first perProcMem pages as valid (in main mem ) */
         for (i = 0; i < numProcs; i++)
-            for (j = 0; j < perProcMem; j++)
+        {
+            for (j = 0; j < perProcMem || j < proc_ptables[i]->numPages; j++)
+            {
                 proc_ptables[i]->pages[j]->valid = 1;
+                proc_ptables[i]->numLoaded++;
+            }
+        }
 
         /* read from ptrace and run the simulation */
         free(line);

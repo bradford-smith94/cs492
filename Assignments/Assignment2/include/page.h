@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page.h
- * 03/22/2016
+ * 03/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -26,6 +26,7 @@ struct s_ptable
 {
     page** pages;
     int numPages;
+    int numLoaded;
 };
 
 typedef struct s_ptable ptable;
