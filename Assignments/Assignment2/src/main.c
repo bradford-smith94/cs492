@@ -4,6 +4,8 @@
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
+#define NO_SPAM
+
 #include "VMsimulator.h"
 
 /* pre: takes in int argc and char** argv command line agruments
@@ -25,10 +27,13 @@ int main(int argc, char** argv)
     char c;
     int numProcs;
     int i;
+    int j;
     ptable** proc_ptables;
     char* line;
     size_t len;
     ssize_t ret;
+    ptable* temp_ptable;
+    int perProcMem;
 
     /* verifiy number of arguments */
     if (argc != 6)
@@ -115,60 +120,91 @@ int main(int argc, char** argv)
     fflush(stdout);
 #endif
 
-    /* create a list of page tables (one for each process) */
-    proc_ptables = (ptable**)malloc(sizeof(ptable*)*numProcs);
-
-    /* move the fd back to the start of the file so we can read it again */
-    rewind(plistfd);
-
-    /* read from plist again to setup proc_ptables */
-    i = 0;
-    line = NULL;
-    len = 0;
-    while ((ret = getline(&line, &len, plistfd)) != -1)
+    if (numProcs > 0)
     {
-        /* skip over all empty lines */
-        if (!strcmp(line, "\n"))
-            continue;
+        /* create a list of page tables (one for each process) */
+        proc_ptables = (ptable**)malloc(sizeof(ptable*)*numProcs);
+
+        /* move the fd back to the start of the file so we can read it again */
+        rewind(plistfd);
+
+        /* read from plist again to setup proc_ptables */
+        i = 0;
+        line = NULL;
+        len = 0;
+        while ((ret = getline(&line, &len, plistfd)) != -1)
+        {
+            /* skip over all empty lines */
+            if (!strcmp(line, "\n"))
+                continue;
+
+#ifndef NO_SPAM
+#ifdef DEBUG
+            printf("[DEBUG]\tRead plist line: %s", line);
+            fflush(stdout);
+#endif
+#endif
+
+            /* this returns the PID, next strtok will be the mem locs */
+            strtok(line, " ");
+            proc_ptables[i++] = createPageTable(pageSize, atoi(strtok(NULL, " ")));
+        }
+
+        /* load initial main memory */
+        perProcMem = (int)floor((double)MAX_MEM / (numProcs * pageSize));
 
 #ifdef DEBUG
-        printf("[DEBUG]\tRead plist line: %s", line);
+        printf("[DEBUG]\tEach process gets %d main mem entries\n", perProcMem);
         fflush(stdout);
 #endif
 
-        /* this returns the PID, next strtok will be the mem locs */
-        strtok(line, " ");
-        proc_ptables[i++] = createPageTable(pageSize, atoi(strtok(NULL, " ")));
-    }
+        /* for each program set the first perProcMem pages as valid (in main mem ) */
+        for (i = 0; i < numProcs; i++)
+            for (j = 0; j < perProcMem; j++)
+                proc_ptables[i]->pages[j]->valid = 1;
 
-    /* read from ptrace and run the simulation */
-    free(line);
-    line = NULL;
-    len = 0;
-    while ((ret = getline(&line, &len, ptracefd)) != -1)
-    {
-        /* skip over all empty lines */
-        if (!strcmp(line, "\n"))
-            continue;
+        /* read from ptrace and run the simulation */
+        free(line);
+        line = NULL;
+        len = 0;
+        while ((ret = getline(&line, &len, ptracefd)) != -1)
+        {
+            /* skip over all empty lines */
+            if (!strcmp(line, "\n"))
+                continue;
 
+#ifndef NO_SPAM
 #ifdef DEBUG
-        printf("[DEBUG]\tRead ptrace line: %s", line);
-        fflush(stdout);
+            printf("[DEBUG]\tRead ptrace line: %s", line);
+            fflush(stdout);
+#endif
 #endif
 
-        /* this returns the PID, next strtok will be the mem loc to access */
-        i = atoi(strtok(line, " "));
-    }
+            /* this returns the PID, next strtok will be the mem loc to access */
+            i = atoi(strtok(line, " "));
 
+            /* set temporary page table to this programs page table */
+            temp_ptable = proc_ptables[i];
+
+            /* get mem loc to access */
+            i = atoi(strtok(NULL, " "));
+
+            /* access temp_ptable->pages[ceil(i/pageSize)] */
+            /* TODO: */
+        }
+    }
 
     /* close files, ignoring any errors on close */
     fclose(plistfd);
     fclose(ptracefd);
 
     /* free memory */
-    for (i = 0; i < numProcs; i++)
-        deletePageTable(proc_ptables[i]);
-    free(proc_ptables);
+    if (proc_ptables)
+    {
+        for (i = 0; i < numProcs; i++)
+            deletePageTable(proc_ptables[i]);
+        free(proc_ptables);
+    }
 
     /* print total number of page swaps on exit */
     printf("Total page swaps: %lu\n", gl_page_swaps);

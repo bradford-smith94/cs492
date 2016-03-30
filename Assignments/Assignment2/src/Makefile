@@ -16,7 +16,7 @@ TEX=pdflatex -shell-escape -interaction=nonstopmode -file-line-error
 RM=rm -f
 INCLPATH=-I../include
 LIBPATH=
-LDLIBS=
+LDLIBS= -lm
 LDFLAGS+=
 # implicit compiling rules:
 # C complied with: `$(CC) -c $(CPPFLAGS) $(CFLAGS)`
