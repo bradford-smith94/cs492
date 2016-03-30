@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 03/23/2016
+ * 03/29/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
         ptrace = argv[2];
 
         pageSize = atoi(argv[3]);
-        if (pageSize <= 0)
+        if (pageSize <= 0 || !isPowTwo(pageSize) || pageSize > MAX_PAGE_SIZE)
         {
             printf("[ERROR]\tInvalid page size [%s]!\n", argv[3]);
             return 1;
