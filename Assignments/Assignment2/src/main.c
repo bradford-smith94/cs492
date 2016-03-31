@@ -195,8 +195,17 @@ int main(int argc, char** argv)
             /* get mem loc to access */
             i = atoi(strtok(NULL, " "));
 
-            /* access temp_ptable->pages[ceil(i/pageSize)] */
-            /* TODO: */
+            /* try to access temp_ptable->pages[ceil(i/pageSize)] */
+            if (temp_ptable->pages[(int)ceil((double)i/pageSize)]->valid)
+            {
+                /* page hit (in main memory) */
+                temp_ptable->pages[(int)ceil((double)i/pageSize)]->accessed++;
+                /* TODO: update FIFO if necessary*/
+            }
+            else /* page miss (need to swap) */
+            {
+                /* TODO: implement page swapping */
+            }
         }
     }
 
