@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 03/30/2016
+ * 03/31/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -55,9 +55,9 @@ int main(int argc, char** argv)
         }
 
         pageReplacement = argv[4];
-        if (!strcmp(pageReplacement, "FIFO") &&
-            !strcmp(pageReplacement, "LRU") &&
-            !strcmp(pageReplacement, "Clock"))
+        if (!strcmp(pageReplacement, OPT_FIFO) &&
+            !strcmp(pageReplacement, OPT_LRU) &&
+            !strcmp(pageReplacement, OPT_CLOCK))
         {
             printf("[ERROR]\tInvalid page replacement method!\n");
             return 1;
@@ -193,13 +193,28 @@ int main(int argc, char** argv)
             temp_ptable = proc_ptables[i];
 
             /* get mem loc to access */
-            i = atoi(strtok(NULL, " "));
+            j = atoi(strtok(NULL, " "));
+            j = (int)ceil((double)j/pageSize);
 
-            /* try to access temp_ptable->pages[ceil(i/pageSize)] */
-            if (temp_ptable->pages[(int)ceil((double)i/pageSize)]->valid)
+            /* 'i' is now the process number and
+             * 'j' is now the page number to access
+             */
+
+#ifndef NO_SPAM
+#ifdef DEBUG
+            printf("[DEBUG]\tAbout to access process [%d] page [%d] of [%d] total pages\n",
+                    i,
+                    j,
+                    temp_ptable->numPages);
+            fflush(stdout);
+#endif
+#endif
+
+            /* try to access temp_ptable->pages[j - 1] because of zero indexing */
+            if (temp_ptable->pages[j - 1]->valid)
             {
                 /* page hit (in main memory) */
-                temp_ptable->pages[(int)ceil((double)i/pageSize)]->accessed++;
+                temp_ptable->pages[j - 1]->accessed++;
                 /* TODO: update FIFO if necessary*/
             }
             else /* page miss (need to swap) */

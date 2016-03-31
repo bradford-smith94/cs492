@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page.h
- * 03/30/2016
+ * 03/31/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <math.h>
 
 /* create data structures */
 struct s_page

@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page_table.c
- * 03/30/2016
+ * 03/31/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -16,7 +16,7 @@ ptable* createPageTable(int pSize, int pTotal)
     ptable* ret;
     page* p;
     int i;
-    int numPages = pTotal / pSize;
+    int numPages = (int)ceil((double)pTotal / pSize);
 
 #ifdef DEBUG
     printf("[DEBUG]\tCreating page table: page size [%d] num mem locs [%d]\n",
