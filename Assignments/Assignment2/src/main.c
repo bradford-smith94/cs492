@@ -166,7 +166,12 @@ int main(int argc, char** argv)
             {
                 proc_ptables[i]->pages[j]->valid = 1;
                 proc_ptables[i]->numLoaded++;
-                /* TODO: update FIFO if necessary */
+
+                /* if we're using FIFO page replacement */
+                if (!strcmp(pageReplacement, OPT_FIFO))
+                {
+                    pushFifo(proc_ptables[i], j);
+                }
             }
         }
 
@@ -212,7 +217,6 @@ int main(int argc, char** argv)
             {
                 /* page hit (in main memory) */
                 temp_ptable->pages[j - 1]->accessed++;
-                /* TODO: update FIFO if necessary*/
             }
             else /* page miss (need to swap) */
             {
