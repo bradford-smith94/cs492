@@ -14,11 +14,19 @@
 #include <math.h>
 
 /* create data structures */
+struct s_fifo
+{
+    int pageNum;
+    struct s_fifo* next;
+};
+
+typedef struct s_fifo fifo;
+
 struct s_page
 {
     int number;
     int valid;
-    unsigned long accessed;
+    unsigned long accessed; /* for LRU/Clock page replacement */
 };
 
 typedef struct s_page page;
@@ -28,6 +36,7 @@ struct s_ptable
     page** pages;
     int numPages;
     int numLoaded;
+    fifo* fifoHead; /* for FIFO page replacement */
 };
 
 typedef struct s_ptable ptable;
@@ -39,5 +48,7 @@ unsigned int gl_pages_total;
 ptable* createPageTable(int, int);
 void deletePageTable(ptable*);
 page* createPage();
+void pushFifo(ptable*, int);
+fifo* popFifo(ptable*);
 
 #endif /* _PAGE_H_ */

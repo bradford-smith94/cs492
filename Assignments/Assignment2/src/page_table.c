@@ -44,6 +44,8 @@ ptable* createPageTable(int pSize, int pTotal)
                 }
                 ret->pages[i] = p;
             }
+
+            ret->fifoHead = NULL;
         }
     }
 
@@ -86,6 +88,48 @@ page* createPage()
         ret->valid = 0;
         ret->accessed = 0;
     }
+    return ret;
+}
+
+/* pre: takes in a ptable* 'tab' and an int 'num', 'tab' must be a valid ptable*
+ *      and 'num' must be >= 0 and < 'tab'->numPages
+ * post: allocates and adds an entry to 'tab's fifoHead representing the page at
+ *      index 'num'
+ */
+void pushFifo(ptable* tab, int num)
+{
+    fifo* tmp;
+    fifo* n;
+
+    n = (fifo*)malloc(sizeof(fifo));
+    n->pageNum = num;
+
+    tmp = tab->fifoHead;
+
+    if (tmp == NULL)
+        tmp = n;
+    else
+    {
+        while (tmp->next != NULL)
+            tmp = tmp->next;
+        tmp->next = n;
+    }
+    n->next = NULL;
+}
+
+/* pre: takes in a ptable* 'tab' which must be a valid ptable*
+ * post: pops an entry off of 'tab's
+ * return: a fifo* that is the entry which was popped, this needed to be freed
+ *      after it is used or NULL if the FIFO was empty
+ */
+fifo* popFifo(ptable* tab)
+{
+    fifo* ret;
+
+    ret = tab->fifoHead;
+    if (tab->fifoHead != NULL)
+        tab->fifoHead = tab->fifoHead->next;
+
     return ret;
 }
 

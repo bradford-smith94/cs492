@@ -166,6 +166,7 @@ int main(int argc, char** argv)
             {
                 proc_ptables[i]->pages[j]->valid = 1;
                 proc_ptables[i]->numLoaded++;
+                /* TODO: update FIFO if necessary */
             }
         }
 
@@ -179,11 +180,9 @@ int main(int argc, char** argv)
             if (!strcmp(line, "\n"))
                 continue;
 
-#ifndef NO_SPAM
-#ifdef DEBUG
+#if defined (DEBUG) && !defined (NO_SPAM)
             printf("[DEBUG]\tRead ptrace line: %s", line);
             fflush(stdout);
-#endif
 #endif
 
             /* this returns the PID, next strtok will be the mem loc to access */
@@ -200,14 +199,12 @@ int main(int argc, char** argv)
              * 'j' is now the page number to access
              */
 
-#ifndef NO_SPAM
-#ifdef DEBUG
+#if defined (DEBUG) && !defined (NO_SPAM)
             printf("[DEBUG]\tAbout to access process [%d] page [%d] of [%d] total pages\n",
                     i,
                     j,
                     temp_ptable->numPages);
             fflush(stdout);
-#endif
 #endif
 
             /* try to access temp_ptable->pages[j - 1] because of zero indexing */
