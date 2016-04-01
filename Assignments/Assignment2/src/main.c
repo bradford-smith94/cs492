@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 03/31/2016
+ * 04/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
         /* for each program set the first perProcMem pages as valid (in main mem ) */
         for (i = 0; i < numProcs; i++)
         {
-            for (j = 0; j < perProcMem || j < proc_ptables[i]->numPages; j++)
+            for (j = 0; j < perProcMem && j < proc_ptables[i]->numPages; j++)
             {
                 proc_ptables[i]->pages[j]->valid = 1;
                 proc_ptables[i]->numLoaded++;
@@ -173,6 +173,13 @@ int main(int argc, char** argv)
                     pushFifo(proc_ptables[i], j);
                 }
             }
+
+#ifdef DEBUG
+            printf("[DEBUG]\tProcess [%d] loaded [%d] pages\n",
+                    i,
+                    proc_ptables[i]->numLoaded);
+            fflush(stdout);
+#endif
         }
 
         /* read from ptrace and run the simulation */
@@ -193,7 +200,7 @@ int main(int argc, char** argv)
             /* this returns the PID, next strtok will be the mem loc to access */
             i = atoi(strtok(line, " "));
 
-            /* set temporary page table to this programs page table */
+            /* set temporary page table to this program's page table */
             temp_ptable = proc_ptables[i];
 
             /* get mem loc to access */
@@ -220,6 +227,7 @@ int main(int argc, char** argv)
             }
             else /* page miss (need to swap) */
             {
+                gl_page_swaps++;
                 /* TODO: implement page swapping */
             }
         }
