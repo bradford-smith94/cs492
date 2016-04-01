@@ -91,6 +91,28 @@ page* createPage()
     return ret;
 }
 
+/* pre: takes in a ptable* 'tab' which must be a valid ptable* and an integer
+ *      'n' which must be >= 0 and < 'tab'->numPages
+ * post: sets page 'n' of 'tab' to valid and increments the number of loaded
+ *      pages in 'tab'
+ */
+void validatePage(ptable* tab, int n)
+{
+    tab->pages[n]->valid = 1;
+    tab->numLoaded++;
+}
+
+/* pre: takes in a ptable* 'tab' which must be a valid ptable* and an integer
+ *      'n' which must be >= 0 and < 'tab'->numPages
+ * post: sets page 'n' of 'tab' to invalid and decrements the number of loaded
+ *      pages in 'tab'
+ */
+void invalidatePage(ptable* tab, int n)
+{
+    tab->pages[n]->valid = 0;
+    tab->numLoaded--;
+}
+
 /* pre: takes in a ptable* 'tab' and an int 'num', 'tab' must be a valid ptable*
  *      and 'num' must be >= 0 and < 'tab'->numPages
  * post: allocates and adds an entry to 'tab's fifoHead representing the page at

@@ -48,6 +48,8 @@ unsigned int gl_pages_total;
 ptable* createPageTable(int, int);
 void deletePageTable(ptable*);
 page* createPage();
+void validatePage(ptable*, int);
+void invalidatePage(ptable*, int);
 void pushFifo(ptable*, int);
 int popFifo(ptable*);
 int indexOfNextInvalidPage(ptable*, int);
