@@ -15,25 +15,28 @@
 int main(int argc, char** argv)
 {
     /* parameters */
-    char* plist;
-    char* ptrace;
-    int pageSize;
-    char* pageReplacement;
-    int prePaging;
+    char* plist; /* path to plist file */
+    char* ptrace; /* path to ptrace file */
+    int pageSize; /* page size */
+    char* pageReplacement; /* page replacement method */
+    int prePaging; /* "boolean" for pre-paging vs demand */
 
     /* other variables */
-    FILE* plistfd;
-    FILE* ptracefd;
+    FILE* plistfd; /* file handle for plist file */
+    FILE* ptracefd; /* file handle for ptrace file */
+    int numProcs; /* number of processes in plist */
+    ptable** proc_ptables; /* list of page tables (one for each process in plist) */
+    int perProcMem; /* amount of memory locations in main memory per process */
+    unsigned long cycle; /* "clock" cycle for LRU */
+
+    /* temporary variables and return codes  */
     char c;
-    int numProcs;
     int i;
     int j;
-    ptable** proc_ptables;
     char* line;
     size_t len;
     ssize_t ret;
     ptable* temp_ptable;
-    int perProcMem;
 
     /* verifiy number of arguments */
     if (argc != 6)
@@ -186,6 +189,7 @@ int main(int argc, char** argv)
         free(line);
         line = NULL;
         len = 0;
+        cycle = 0;
         while ((ret = getline(&line, &len, ptracefd)) != -1)
         {
             /* skip over all empty lines */
@@ -222,7 +226,7 @@ int main(int argc, char** argv)
             if (temp_ptable->pages[j]->valid)
             {
                 /* page hit (in main memory) */
-                temp_ptable->pages[j]->accessed++;
+                temp_ptable->pages[j]->accessed = cycle;
             }
             else /* page miss (need to swap) */
             {
@@ -269,6 +273,39 @@ int main(int argc, char** argv)
                     }
                     else if (!strcmp(pageReplacement, OPT_LRU))
                     {
+                        /* invalidate two pages */
+                        i = indexOfLRUValidPage(temp_ptable);
+                        if (i > -1)
+                        {
+                            temp_ptable->pages[i]->valid = 0;
+                            temp_ptable->numLoaded--;
+                        }
+                        i = indexOfLRUValidPage(temp_ptable);
+                        if (i > -1)
+                        {
+                            temp_ptable->pages[i]->valid = 0;
+                            temp_ptable->numLoaded--;
+                        }
+
+                        /* load the faulted page */
+                        if (temp_ptable->numLoaded < perProcMem)
+                        {
+                            temp_ptable->pages[j]->valid = 1;
+                            temp_ptable->pages[j]->accessed = cycle;
+                            temp_ptable->numLoaded++;
+                        }
+
+                        /* search for the next page that can be loaded */
+                        j++;
+                        if (j == temp_ptable->numPages)
+                            j = 0;
+                        j = indexOfNextInvalidPage(temp_ptable, j);
+                        if (j != -1 && temp_ptable->numLoaded < perProcMem)
+                        {
+                            temp_ptable->pages[j]->valid = 1;
+                            temp_ptable->pages[j]->accessed = cycle;
+                            temp_ptable->numLoaded++;
+                        }
                     }
                     else /* Clock replacement */
                     {
@@ -279,14 +316,38 @@ int main(int argc, char** argv)
                     if (!strcmp(pageReplacement, OPT_FIFO))
                     {
                         /* invalidate one page */
-                        temp_ptable->pages[popFifo(temp_ptable)]->valid = 0;
+                        i = popFifo(temp_ptable);
+                        if (i > -1)
+                        {
+                            temp_ptable->pages[i]->valid = 0;
+                            temp_ptable->numLoaded--;
+                        }
 
                         /* load the faulted page */
-                        temp_ptable->pages[j]->valid = 1;
-                        pushFifo(temp_ptable, j);
+                        if (temp_ptable->numLoaded < perProcMem)
+                        {
+                            temp_ptable->pages[j]->valid = 1;
+                            pushFifo(temp_ptable, j);
+                            temp_ptable->numLoaded++;
+                        }
                     }
                     else if (!strcmp(pageReplacement, OPT_LRU))
                     {
+                        /* invalidate one page */
+                        i = indexOfLRUValidPage(temp_ptable);
+                        if (i > -1)
+                        {
+                            temp_ptable->pages[i]->valid = 0;
+                            temp_ptable->numLoaded--;
+                        }
+
+                        /* load the faulted page */
+                        if (temp_ptable->numLoaded < perProcMem)
+                        {
+                            temp_ptable->pages[j]->valid = 1;
+                            temp_ptable->pages[j]->accessed = cycle;
+                            temp_ptable->numLoaded++;
+                        }
                     }
                     else /* Clock replacement */
                     {

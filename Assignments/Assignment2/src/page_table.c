@@ -167,3 +167,27 @@ int indexOfNextInvalidPage(ptable* tab, int s)
     return s;
 }
 
+/* pre: takes in a ptable* 'tab' which must be a valid ptable*
+ * post: returns the index of the least recently used valid (loaded) page
+ * return: an integer that is the index of the least recently used valid
+ *      (loaded) page in 'tab' or -1 if one does not exist
+ */
+int indexOfLRUValidPage(ptable* tab)
+{
+    int i;
+    int ret;
+    unsigned long min;
+
+    ret = -1;
+    for (i = 0; i < tab->numPages; i++)
+    {
+        if (!tab->pages[i]->valid)
+            continue;
+
+        if (!min || tab->pages[i]->accessed < min)
+            min = tab->pages[i]->accessed;
+    }
+
+    return ret;
+}
+

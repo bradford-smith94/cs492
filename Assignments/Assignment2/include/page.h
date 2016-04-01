@@ -51,5 +51,6 @@ page* createPage();
 void pushFifo(ptable*, int);
 int popFifo(ptable*);
 int indexOfNextInvalidPage(ptable*, int);
+int indexOfLRUValidPage(ptable*);
 
 #endif /* _PAGE_H_ */
