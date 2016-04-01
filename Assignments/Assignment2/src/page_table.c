@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page_table.c
- * 03/31/2016
+ * 04/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -119,16 +119,24 @@ void pushFifo(ptable* tab, int num)
 
 /* pre: takes in a ptable* 'tab' which must be a valid ptable*
  * post: pops an entry off of 'tab's
- * return: a fifo* that is the entry which was popped, this needed to be freed
- *      after it is used or NULL if the FIFO was empty
+ * return: an integer that is the pageNumber of the entry popped off 'tab' or -1
+ *      if no entry existed
  */
-fifo* popFifo(ptable* tab)
+int popFifo(ptable* tab)
 {
-    fifo* ret;
+    int ret;
+    fifo* tmp;
 
-    ret = tab->fifoHead;
+    ret = -1;
+    tmp = tab->fifoHead;
     if (tab->fifoHead != NULL)
         tab->fifoHead = tab->fifoHead->next;
+
+    if (tmp != NULL)
+    {
+        ret = tmp->pageNum;
+        free(tmp);
+    }
 
     return ret;
 }

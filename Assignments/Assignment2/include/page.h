@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page.h
- * 03/31/2016
+ * 04/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -49,6 +49,6 @@ ptable* createPageTable(int, int);
 void deletePageTable(ptable*);
 page* createPage();
 void pushFifo(ptable*, int);
-fifo* popFifo(ptable*);
+int popFifo(ptable*);
 
 #endif /* _PAGE_H_ */
