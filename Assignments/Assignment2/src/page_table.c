@@ -141,3 +141,29 @@ int popFifo(ptable* tab)
     return ret;
 }
 
+/* pre: takes in a ptable* 'tab' which must be a valid ptable*, and an integer
+ *      's' which is >= 0 and < 'tab'->numPages
+ * post: returns the index of the next invalid (unloaded) page starting at 's'
+ * return: an integer index of the next invalid (unloaded) page in 'tab' or -1
+ *      if one does not exist
+ */
+int indexOfNextInvalidPage(ptable* tab, int s)
+{
+    int startPos;
+
+    startPos = s;
+    while (tab->pages[s]->valid)
+    {
+        s = (s + 1) % tab->numPages;
+
+        /* if we get back to the startPos without finding an invalid page */
+        if (s == startPos)
+        {
+            s = -1;
+            break;
+        }
+    }
+
+    return s;
+}
+

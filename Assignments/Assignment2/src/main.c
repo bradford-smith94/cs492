@@ -218,19 +218,20 @@ int main(int argc, char** argv)
 #endif
 
             /* try to access temp_ptable->pages[j - 1] because of zero indexing */
-            if (temp_ptable->pages[j - 1]->valid)
+            j--;
+            if (temp_ptable->pages[j]->valid)
             {
                 /* page hit (in main memory) */
-                temp_ptable->pages[j - 1]->accessed++;
+                temp_ptable->pages[j]->accessed++;
             }
             else /* page miss (need to swap) */
             {
                 /* record this page fault */
                 gl_page_swaps++;
 
-                if (!strcmp(pageReplacement, OPT_FIFO))
+                if (prePaging)
                 {
-                    if (prePaging)
+                    if (!strcmp(pageReplacement, OPT_FIFO))
                     {
                         /* invalidate two pages */
                         i = popFifo(temp_ptable);
@@ -249,58 +250,46 @@ int main(int argc, char** argv)
                         /* load the faulted page */
                         if (temp_ptable->numLoaded < perProcMem)
                         {
-                            temp_ptable->pages[j - 1]->valid = 1;
-                            pushFifo(temp_ptable, j - 1);
+                            temp_ptable->pages[j]->valid = 1;
+                            pushFifo(temp_ptable, j);
                             temp_ptable->numLoaded++;
                         }
 
                         /* search for the next page that can be loaded */
+                        j++;
                         if (j == temp_ptable->numPages)
                             j = 0;
-                        i = j;
-                        while (temp_ptable->pages[j]->valid)
-                        {
-                            j = (j + 1) % temp_ptable->numPages;
-                            if (j == i)
-                                break;
-                        }
-                        if (!temp_ptable->pages[j]->valid && temp_ptable->numLoaded < perProcMem)
+                        j = indexOfNextInvalidPage(temp_ptable, j);
+                        if (j != -1 && temp_ptable->numLoaded < perProcMem)
                         {
                             temp_ptable->pages[j]->valid = 1;
                             pushFifo(temp_ptable, j);
                             temp_ptable->numLoaded++;
                         }
                     }
-                    else /* demand paging */
+                    else if (!strcmp(pageReplacement, OPT_LRU))
+                    {
+                    }
+                    else /* Clock replacement */
+                    {
+                    }
+                }
+                else /* demand paging */
+                {
+                    if (!strcmp(pageReplacement, OPT_FIFO))
                     {
                         /* invalidate one page */
                         temp_ptable->pages[popFifo(temp_ptable)]->valid = 0;
 
                         /* load the faulted page */
-                        temp_ptable->pages[j - 1]->valid = 1;
-                        pushFifo(temp_ptable, j - 1);
+                        temp_ptable->pages[j]->valid = 1;
+                        pushFifo(temp_ptable, j);
                     }
-                }
-                else if (!strcmp(pageReplacement, OPT_LRU))
-                {
-                    if (prePaging)
+                    else if (!strcmp(pageReplacement, OPT_LRU))
                     {
-                        /* invalidate two pages */
                     }
-                    else /* demand paging */
+                    else /* Clock replacement */
                     {
-                        /* invalidate one page */
-                    }
-                }
-                else /* Clock replacement */
-                {
-                    if (prePaging)
-                    {
-                        /* invalidate two pages */
-                    }
-                    else /* demand paging */
-                    {
-                        /* invalidate one page */
                     }
                 }
             }
