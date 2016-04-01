@@ -207,9 +207,7 @@ int main(int argc, char** argv)
             j = atoi(strtok(NULL, " "));
             j = (int)ceil((double)j/pageSize);
 
-            /* 'i' is now the process number and
-             * 'j' is now the page number to access
-             */
+            /* 'i' is now the process number and 'j' is now the page number to access */
 
 #if defined (DEBUG) && !defined (NO_SPAM)
             printf("[DEBUG]\tAbout to access process [%d] page [%d] of [%d] total pages\n",
@@ -227,8 +225,78 @@ int main(int argc, char** argv)
             }
             else /* page miss (need to swap) */
             {
+                /* record this page fault */
                 gl_page_swaps++;
-                /* TODO: implement page swapping */
+
+                if (!strcmp(pageReplacement, OPT_FIFO))
+                {
+                    if (prePaging)
+                    {
+                        /* invalidate two pages */
+                        i = popFifo(temp_ptable);
+                        if (i > -1)
+                        {
+                            temp_ptable->pages[i]->valid = 0;
+                            temp_ptable->numLoaded--;
+                        }
+                        i = popFifo(temp_ptable);
+                        if (i > -1)
+                        {
+                            temp_ptable->pages[i]->valid = 0;
+                            temp_ptable->numLoaded--;
+                        }
+
+                        /* load the faulted page */
+                        temp_ptable->pages[j - 1]->valid = 1;
+                        temp_ptable->numLoaded++;
+
+                        /* search for the next page that can be loaded */
+                        if (j == temp_ptable->numPages)
+                            j = 0;
+                        i = j;
+                        while (temp_ptable->pages[j]->valid)
+                        {
+                            j = (j + 1) % temp_ptable->numPages;
+                            if (j == i)
+                                break;
+                        }
+                        if (!temp_ptable->pages[j]->valid)
+                        {
+                            temp_ptable->pages[j]->valid = 1;
+                            temp_ptable->numLoaded++;
+                        }
+                    }
+                    else /* demand paging */
+                    {
+                        /* invalidate one page */
+                        temp_ptable->pages[popFifo(temp_ptable)]->valid = 0;
+
+                        /* load the faulted page */
+                        temp_ptable->pages[j - 1]->valid = 1;
+                    }
+                }
+                else if (!strcmp(pageReplacement, OPT_LRU))
+                {
+                    if (prePaging)
+                    {
+                        /* invalidate two pages */
+                    }
+                    else /* demand paging */
+                    {
+                        /* invalidate one page */
+                    }
+                }
+                else /* Clock replacement */
+                {
+                    if (prePaging)
+                    {
+                        /* invalidate two pages */
+                    }
+                    else /* demand paging */
+                    {
+                        /* invalidate one page */
+                    }
+                }
             }
         }
     }
