@@ -247,8 +247,12 @@ int main(int argc, char** argv)
                         }
 
                         /* load the faulted page */
-                        temp_ptable->pages[j - 1]->valid = 1;
-                        temp_ptable->numLoaded++;
+                        if (temp_ptable->numLoaded < perProcMem)
+                        {
+                            temp_ptable->pages[j - 1]->valid = 1;
+                            pushFifo(temp_ptable, j - 1);
+                            temp_ptable->numLoaded++;
+                        }
 
                         /* search for the next page that can be loaded */
                         if (j == temp_ptable->numPages)
@@ -260,9 +264,10 @@ int main(int argc, char** argv)
                             if (j == i)
                                 break;
                         }
-                        if (!temp_ptable->pages[j]->valid)
+                        if (!temp_ptable->pages[j]->valid && temp_ptable->numLoaded < perProcMem)
                         {
                             temp_ptable->pages[j]->valid = 1;
+                            pushFifo(temp_ptable, j);
                             temp_ptable->numLoaded++;
                         }
                     }
@@ -273,6 +278,7 @@ int main(int argc, char** argv)
 
                         /* load the faulted page */
                         temp_ptable->pages[j - 1]->valid = 1;
+                        pushFifo(temp_ptable, j - 1);
                     }
                 }
                 else if (!strcmp(pageReplacement, OPT_LRU))
