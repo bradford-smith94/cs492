@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page_table.c
- * 04/01/2016
+ * 04/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -88,6 +88,7 @@ page* createPage()
         ret->valid = 0;
         ret->accessed = 0;
     }
+
     return ret;
 }
 
@@ -140,7 +141,7 @@ void pushFifo(ptable* tab, int num)
 }
 
 /* pre: takes in a ptable* 'tab' which must be a valid ptable*
- * post: pops an entry off of 'tab's
+ * post: pops an entry off of 'tab's fifoHead
  * return: an integer that is the pageNumber of the entry popped off 'tab' or -1
  *      if no entry existed
  */
@@ -158,6 +159,100 @@ int popFifo(ptable* tab)
     {
         ret = tmp->pageNum;
         free(tmp);
+    }
+
+    return ret;
+}
+
+/* pre: takes in a ptable* 'tab' which must be a valid ptable*
+ * post: returns the index of the least recently used valid (loaded) page
+ * return: an integer that is the index of the least recently used valid
+ *      (loaded) page in 'tab' or -1 if one does not exist
+ */
+int indexOfLRUValidPage(ptable* tab)
+{
+    int i;
+    int ret;
+    unsigned long min;
+
+    ret = -1;
+    for (i = 0; i < tab->numPages; i++)
+    {
+        if (!tab->pages[i]->valid)
+            continue;
+
+        if (!min || tab->pages[i]->accessed < min)
+            min = tab->pages[i]->accessed;
+    }
+
+    return ret;
+}
+
+/* pre: takes in a ptable* 'tab' and an int 'num', 'tab' must be a valid ptable*
+ *      and 'num' must be >= 0 and < 'tab'->numPages
+ * post: allocates and adds an entry to 'tab's fifoHead representing the page at
+ *      index 'num' accounting for Clock swapping
+ */
+void pushClock(ptable* tab, int num)
+{
+    fifo* tmp;
+    fifo* n;
+
+    n = (fifo*)malloc(sizeof(fifo));
+    n->pageNum = num;
+    n->chance = 1;
+
+    tmp = tab->fifoHead;
+
+    if (tmp == NULL)
+        tmp = n;
+    else
+    {
+        while (tmp->next != NULL)
+            tmp = tmp->next;
+        tmp->next = n;
+    }
+    n->next = NULL;
+}
+
+/* pre: takes in a ptable* 'tab' which must be a valid ptable*
+ * post: pops an entry off of 'tab's fifoHead accounting for Clock swapping
+ * return: an integer that is the pageNumber of the entry popped off 'tab'
+ *      accounting for Clock swapping or -1 if no entry existed
+ */
+int popClock(ptable* tab)
+{
+    int ret;
+    fifo* tmp;
+    fifo* f;
+
+    ret = -1;
+    tmp = tab->fifoHead;
+    if (tmp != NULL)
+    {
+        while (1)
+        {
+            if (tmp->chance) /* set chance to zero and add to end */
+            {
+                tmp->chance = 0;
+                tab->fifoHead = tmp->next;
+                f = tmp;
+                while (f->next != NULL)
+                    f = f->next;
+                f->next = tmp;
+                tmp->next = NULL;
+
+                /* start again at the new head */
+                tmp = tab->fifoHead;
+            }
+            else /* return this one */
+            {
+                ret = tmp->pageNum;
+                tab->fifoHead = tmp->next;
+                free(tmp);
+                break;
+            }
+        }
     }
 
     return ret;
@@ -187,29 +282,5 @@ int indexOfNextInvalidPage(ptable* tab, int s)
     }
 
     return s;
-}
-
-/* pre: takes in a ptable* 'tab' which must be a valid ptable*
- * post: returns the index of the least recently used valid (loaded) page
- * return: an integer that is the index of the least recently used valid
- *      (loaded) page in 'tab' or -1 if one does not exist
- */
-int indexOfLRUValidPage(ptable* tab)
-{
-    int i;
-    int ret;
-    unsigned long min;
-
-    ret = -1;
-    for (i = 0; i < tab->numPages; i++)
-    {
-        if (!tab->pages[i]->valid)
-            continue;
-
-        if (!min || tab->pages[i]->accessed < min)
-            min = tab->pages[i]->accessed;
-    }
-
-    return ret;
 }
 

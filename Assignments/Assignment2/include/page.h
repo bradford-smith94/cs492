@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page.h
- * 04/01/2016
+ * 04/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -17,6 +17,7 @@
 struct s_fifo
 {
     int pageNum;
+    int chance; /* for Clock page replacement second chance */
     struct s_fifo* next;
 };
 
@@ -26,7 +27,7 @@ struct s_page
 {
     int number;
     int valid;
-    unsigned long accessed; /* for LRU/Clock page replacement */
+    unsigned long accessed; /* for LRU page replacement */
 };
 
 typedef struct s_page page;
@@ -36,7 +37,7 @@ struct s_ptable
     page** pages;
     int numPages;
     int numLoaded;
-    fifo* fifoHead; /* for FIFO page replacement */
+    fifo* fifoHead; /* for FIFO/Clock page replacement */
 };
 
 typedef struct s_ptable ptable;
@@ -52,7 +53,9 @@ void validatePage(ptable*, int);
 void invalidatePage(ptable*, int);
 void pushFifo(ptable*, int);
 int popFifo(ptable*);
-int indexOfNextInvalidPage(ptable*, int);
 int indexOfLRUValidPage(ptable*);
+void pushClock(ptable*, int);
+int popClock(ptable*);
+int indexOfNextInvalidPage(ptable*, int);
 
 #endif /* _PAGE_H_ */
