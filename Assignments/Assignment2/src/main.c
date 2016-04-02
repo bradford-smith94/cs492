@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 04/01/2016
+ * 04/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -127,11 +127,9 @@ int main(int argc, char** argv)
             if (!strcmp(line, "\n"))
                 continue;
 
-#ifndef NO_SPAM
-#ifdef DEBUG
+#if defined (DEBUG) && !defined (NO_SPAM)
             printf("[DEBUG]\tRead plist line: %s", line);
             fflush(stdout);
-#endif
 #endif
 
             /* this returns the PID, next strtok will be the mem locs */
@@ -216,101 +214,9 @@ int main(int argc, char** argv)
                 gl_page_swaps++;
 
                 if (prePaging)
-                {
-                    if (!strcmp(pageReplacement, OPT_FIFO))
-                    {
-                        /* invalidate two pages */
-                        i = popFifo(temp_ptable);
-                        if (i > -1)
-                            invalidatePage(temp_ptable, i);
-                        i = popFifo(temp_ptable);
-                        if (i > -1)
-                            invalidatePage(temp_ptable, i);
-
-                        /* load the faulted page */
-                        if (temp_ptable->numLoaded < perProcMem)
-                        {
-                            validatePage(temp_ptable, j);
-                            pushFifo(temp_ptable, j);
-                        }
-
-                        /* search for the next page that can be loaded */
-                        j++;
-                        if (j == temp_ptable->numPages)
-                            j = 0;
-                        j = indexOfNextInvalidPage(temp_ptable, j);
-                        if (j != -1 && temp_ptable->numLoaded < perProcMem)
-                        {
-                            validatePage(temp_ptable, j);
-                            pushFifo(temp_ptable, j);
-                        }
-                    }
-                    else if (!strcmp(pageReplacement, OPT_LRU))
-                    {
-                        /* invalidate two pages */
-                        i = indexOfLRUValidPage(temp_ptable);
-                        if (i > -1)
-                            invalidatePage(temp_ptable, i);
-                        i = indexOfLRUValidPage(temp_ptable);
-                        if (i > -1)
-                            invalidatePage(temp_ptable, i);
-
-                        /* load the faulted page */
-                        if (temp_ptable->numLoaded < perProcMem)
-                        {
-                            validatePage(temp_ptable, j);
-                            temp_ptable->pages[j]->accessed = cycle;
-                        }
-
-                        /* search for the next page that can be loaded */
-                        j++;
-                        if (j == temp_ptable->numPages)
-                            j = 0;
-                        j = indexOfNextInvalidPage(temp_ptable, j);
-                        if (j != -1 && temp_ptable->numLoaded < perProcMem)
-                        {
-                            validatePage(temp_ptable, j);
-                            temp_ptable->pages[j]->accessed = cycle;
-                        }
-                    }
-                    else /* Clock replacement */
-                    {
-                    }
-                }
+                    prePagingSwap(pageReplacement, temp_ptable, j, perProcMem, cycle);
                 else /* demand paging */
-                {
-                    if (!strcmp(pageReplacement, OPT_FIFO))
-                    {
-                        /* invalidate one page */
-                        i = popFifo(temp_ptable);
-                        if (i > -1)
-                            invalidatePage(temp_ptable, i);
-
-                        /* load the faulted page */
-                        if (temp_ptable->numLoaded < perProcMem)
-                        {
-                            validatePage(temp_ptable, j);
-                            pushFifo(temp_ptable, j);
-                        }
-                    }
-                    else if (!strcmp(pageReplacement, OPT_LRU))
-                    {
-                        /* invalidate one page */
-                        i = indexOfLRUValidPage(temp_ptable);
-                        if (i > -1)
-                            invalidatePage(temp_ptable, i);
-
-                        /* load the faulted page */
-                        if (temp_ptable->numLoaded < perProcMem)
-                        {
-                            validatePage(temp_ptable, j);
-                            temp_ptable->pages[j]->accessed = cycle;
-                        }
-                    }
-                    else /* Clock replacement */
-                    {
-                    }
-                }
+                    demandSwap(pageReplacement, temp_ptable, j, perProcMem, cycle);
             }
 
             /* check to make sure process is within memory limits */

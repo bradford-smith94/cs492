@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 VMsimulator.h
- * 04/01/2016
+ * 04/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -32,5 +32,7 @@ unsigned long gl_page_swaps;
 int main(int, char**);
 int isPowTwo(int);
 int countProcs(FILE*);
+void demandSwap(char*, ptable*, int, int, unsigned long);
+void prePagingSwap(char*, ptable*, int, int, unsigned long);
 
 #endif /* _VMSIMULATOR_H_ */

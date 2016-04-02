@@ -1,13 +1,13 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 2
-# 04/01/2016
+# 04/02/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
 PRG=VMsimulator
 AUTHOR=bsmith8
 PROJECT=cs492-assignment2
-SRC=main.c page_table.c isPowTwo.c countProcs.c
+SRC=main.c page_table.c isPowTwo.c countProcs.c swapping.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
 LATEX=report.tex
