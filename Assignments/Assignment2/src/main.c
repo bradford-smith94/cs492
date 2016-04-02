@@ -30,7 +30,6 @@ int main(int argc, char** argv)
     unsigned long cycle; /* "clock" cycle for LRU */
 
     /* temporary variables and return codes  */
-    char c;
     int i;
     int j;
     char* line;
@@ -102,21 +101,7 @@ int main(int argc, char** argv)
     }
 
     /* read from plist to count the number of lines (processes) */
-    numProcs = 0;
-    i = 0;
-    while (!feof(plistfd))
-    {
-        c = fgetc(plistfd);
-        i++;
-        if (c == '\n')
-        {
-            if (i > 1)
-            {
-                i = 0;
-                numProcs++;
-            }
-        }
-    }
+    numProcs = countProcs(plistfd);
 
 #ifdef DEBUG
     printf("[DEBUG]\t%d processes detected\n", numProcs);
@@ -167,14 +152,11 @@ int main(int argc, char** argv)
         {
             for (j = 0; j < perProcMem && j < proc_ptables[i]->numPages; j++)
             {
-                proc_ptables[i]->pages[j]->valid = 1;
-                proc_ptables[i]->numLoaded++;
+                validatePage(proc_ptables[i], j);
 
                 /* if we're using FIFO page replacement */
                 if (!strcmp(pageReplacement, OPT_FIFO))
-                {
                     pushFifo(proc_ptables[i], j);
-                }
             }
 
 #ifdef DEBUG
@@ -210,6 +192,7 @@ int main(int argc, char** argv)
             /* get mem loc to access */
             j = atoi(strtok(NULL, " "));
             j = (int)ceil((double)j/pageSize);
+            j--; /* translate to zero index */
 
             /* 'i' is now the process number and 'j' is now the page number to access */
 
@@ -221,8 +204,7 @@ int main(int argc, char** argv)
             fflush(stdout);
 #endif
 
-            /* try to access temp_ptable->pages[j - 1] because of zero indexing */
-            j--;
+            /* try to access temp_ptable->pages[j] */
             if (temp_ptable->pages[j]->valid)
             {
                 /* page hit (in main memory) */
@@ -331,9 +313,17 @@ int main(int argc, char** argv)
                 }
             }
 
+            /* check to make sure process is within memory limits */
+            if (temp_ptable->numLoaded > perProcMem)
+            {
+                printf("[ERROR]\tProcess has exceeded memory!\n");
+                return 1;
+            }
+
             /* update cycle counter for LRU */
             cycle++;
         }
+        free(line);
     }
 
     /* close files, ignoring any errors on close */

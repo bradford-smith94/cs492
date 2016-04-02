@@ -1,13 +1,13 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 2
-# 03/31/2016
+# 04/01/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
 PRG=VMsimulator
 AUTHOR=bsmith8
 PROJECT=cs492-assignment2
-SRC=main.c page_table.c isPowTwo.c
+SRC=main.c page_table.c isPowTwo.c countProcs.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
 LATEX=report.tex
@@ -45,6 +45,7 @@ test: debug
 plots: re
 	./plot.sh
 
+# latex needs to be made in the above directory to properly find files
 tex: plots
 	cd .. && $(TEX) $(LATEX)
 
