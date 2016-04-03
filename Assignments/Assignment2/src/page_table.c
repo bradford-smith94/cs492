@@ -4,6 +4,9 @@
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
+/* define NO_SPAM to silence very spammy DEBUG messages */
+#define NO_SPAM
+
 #include "page.h"
 
 /* pre: takes in ints pSize and pTotal
@@ -124,20 +127,30 @@ void pushFifo(ptable* tab, int num)
     fifo* tmp;
     fifo* n;
 
+#if defined (DEBUG) && !defined (NO_SPAM)
+    printf("[DEBUG]\tPush FIFO [%d]\n", num);
+    fflush(stdout);
+#endif
+
     n = (fifo*)malloc(sizeof(fifo));
-    n->pageNum = num;
-
-    tmp = tab->fifoHead;
-
-    if (tmp == NULL)
-        tmp = n;
-    else
+    if (n != NULL)
     {
-        while (tmp->next != NULL)
-            tmp = tmp->next;
-        tmp->next = n;
+        n->pageNum = num;
+        n->next = NULL;
+
+        if (tab->fifoHead == NULL)
+            tab->fifoHead = n;
+        else
+        {
+            tmp = tab->fifoHead;
+
+            while (tmp->next != NULL)
+                tmp = tmp->next;
+            tmp->next = n;
+        }
     }
-    n->next = NULL;
+    else
+        printf("[ERROR]\tCould not allocate memory for FIFO entry!\n");
 }
 
 /* pre: takes in a ptable* 'tab' which must be a valid ptable*
@@ -151,15 +164,19 @@ int popFifo(ptable* tab)
     fifo* tmp;
 
     ret = -1;
-    tmp = tab->fifoHead;
     if (tab->fifoHead != NULL)
-        tab->fifoHead = tab->fifoHead->next;
-
-    if (tmp != NULL)
     {
-        ret = tmp->pageNum;
-        free(tmp);
+        tmp = tab->fifoHead->next;
+
+        ret = tab->fifoHead->pageNum;
+        free(tab->fifoHead);
+        tab->fifoHead = tmp;
     }
+
+#if defined (DEBUG) && !defined (NO_SPAM)
+    printf("[DEBUG]\tPop FIFO [%d]\n", ret);
+    fflush(stdout);
+#endif
 
     return ret;
 }
@@ -176,13 +193,17 @@ int indexOfLRUValidPage(ptable* tab)
     unsigned long min;
 
     ret = -1;
+    min = -1; /* this will set min to the MAX */
     for (i = 0; i < tab->numPages; i++)
     {
         if (!tab->pages[i]->valid)
             continue;
 
-        if (!min || tab->pages[i]->accessed < min)
+        if (tab->pages[i]->accessed < min)
+        {
             min = tab->pages[i]->accessed;
+            ret = i;
+        }
     }
 
     return ret;
@@ -198,21 +219,31 @@ void pushClock(ptable* tab, int num)
     fifo* tmp;
     fifo* n;
 
+#if defined (DEBUG) && !defined (NO_SPAM)
+    printf("[DEBUG]\tPush Clock FIFO [%d]\n", num);
+    fflush(stdout);
+#endif
+
     n = (fifo*)malloc(sizeof(fifo));
-    n->pageNum = num;
-    n->chance = 1;
-
-    tmp = tab->fifoHead;
-
-    if (tmp == NULL)
-        tmp = n;
-    else
+    if (n != NULL)
     {
-        while (tmp->next != NULL)
-            tmp = tmp->next;
-        tmp->next = n;
+        n->pageNum = num;
+        n->chance = 1;
+        n->next = NULL;
+
+        if (tab->fifoHead == NULL)
+            tab->fifoHead = n;
+        else
+        {
+            tmp = tab->fifoHead;
+
+            while (tmp->next != NULL)
+                tmp = tmp->next;
+            tmp->next = n;
+        }
     }
-    n->next = NULL;
+    else
+        printf("[ERROR]\tCould not allocate memory for Clock FIFO entry!\n");
 }
 
 /* pre: takes in a ptable* 'tab' which must be a valid ptable*
@@ -227,9 +258,10 @@ int popClock(ptable* tab)
     fifo* f;
 
     ret = -1;
-    tmp = tab->fifoHead;
-    if (tmp != NULL)
+    if (tab->fifoHead != NULL)
     {
+        tmp = tab->fifoHead;
+
         while (1)
         {
             if (tmp->chance) /* set chance to zero and add to end */
@@ -255,7 +287,32 @@ int popClock(ptable* tab)
         }
     }
 
+#if defined (DEBUG) && !defined (NO_SPAM)
+    printf("[DEBUG]\tPop Clock FIFO [%d]\n", ret);
+    fflush(stdout);
+#endif
+
     return ret;
+}
+
+/* pre: takes in a ptable* 'tab' and an int 'num', 'tab' must be a valid ptable*
+ *      and 'num' must be >= 0 and < 'tab'->numPages
+ * post: resets the entry in 'tab's fifoHead for the page at index 'num' chance
+ *      variable to 1
+ */
+void accessClock(ptable* tab, int num)
+{
+    fifo* tmp;
+
+    if (tab->fifoHead != NULL)
+    {
+        tmp = tab->fifoHead;
+
+        while (tmp->pageNum != num && tmp->next != NULL)
+            tmp = tmp->next;
+        if (tmp->pageNum == num)
+            tmp->chance = 1;
+    }
 }
 
 /* pre: takes in a ptable* 'tab' which must be a valid ptable*, and an integer

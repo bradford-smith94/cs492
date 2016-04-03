@@ -56,6 +56,7 @@ int popFifo(ptable*);
 int indexOfLRUValidPage(ptable*);
 void pushClock(ptable*, int);
 int popClock(ptable*);
+void accessClock(ptable*, int);
 int indexOfNextInvalidPage(ptable*, int);
 
 #endif /* _PAGE_H_ */

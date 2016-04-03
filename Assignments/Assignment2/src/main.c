@@ -4,6 +4,7 @@
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
+/* define NO_SPAM to silence very spammy DEBUG messages */
 #define NO_SPAM
 
 #include "VMsimulator.h"
@@ -53,15 +54,18 @@ int main(int argc, char** argv)
         if (pageSize <= 0 || !isPowTwo(pageSize) || pageSize > MAX_PAGE_SIZE)
         {
             printf("[ERROR]\tInvalid page size [%s]!\n", argv[3]);
+            printf("       \tPlease use a positive power of 2\n");
             return 1;
         }
 
         pageReplacement = argv[4];
-        if (!strcmp(pageReplacement, OPT_FIFO) &&
-            !strcmp(pageReplacement, OPT_LRU) &&
-            !strcmp(pageReplacement, OPT_CLOCK))
+        if (strcmp(pageReplacement, OPT_FIFO) &&
+            strcmp(pageReplacement, OPT_LRU) &&
+            strcmp(pageReplacement, OPT_CLOCK))
         {
             printf("[ERROR]\tInvalid page replacement method!\n");
+            printf("       \tPlease use one of: [%s], [%s] or [%s]\n",
+                    OPT_FIFO, OPT_LRU, OPT_CLOCK);
             return 1;
         }
 
@@ -72,6 +76,7 @@ int main(int argc, char** argv)
         else
         {
             printf("[ERROR]\tInvalid value for pre-paging!\n");
+            printf("       \tPlease use either [+] for on or [-] for off\n");
             return 1;
         }
 
@@ -113,6 +118,11 @@ int main(int argc, char** argv)
     {
         /* create a list of page tables (one for each process) */
         proc_ptables = (ptable**)malloc(sizeof(ptable*)*numProcs);
+        if (proc_ptables == NULL)
+        {
+            printf("[ERROR]\t could not allocate memory for page tables!\n");
+            return 1;
+        }
 
         /* move the fd back to the start of the file so we can read it again */
         rewind(plistfd);
@@ -134,7 +144,13 @@ int main(int argc, char** argv)
 
             /* this returns the PID, next strtok will be the mem locs */
             strtok(line, " ");
-            proc_ptables[i++] = createPageTable(pageSize, atoi(strtok(NULL, " ")));
+            proc_ptables[i] = createPageTable(pageSize, atoi(strtok(NULL, " ")));
+            if (proc_ptables[i] == NULL)
+            {
+                printf("[ERROR]\tCould not allocate memory for page table!\n");
+                return 1;
+            }
+            i++;
         }
 
         /* load initial main memory */
@@ -152,9 +168,17 @@ int main(int argc, char** argv)
             {
                 validatePage(proc_ptables[i], j);
 
-                /* if we're using FIFO page replacement */
+#if defined (DEBUG) && !defined (NO_SPAM)
+                printf("[DEBUG]\tInitial load: [%d] [%d] = [%d]\n",
+                        i, j, proc_ptables[i]->pages[j]->valid);
+                fflush(stdout);
+#endif
+
+                /* if we're using FIFO or Clock page replacement */
                 if (!strcmp(pageReplacement, OPT_FIFO))
                     pushFifo(proc_ptables[i], j);
+                else if (!strcmp(pageReplacement, OPT_CLOCK))
+                    pushClock(proc_ptables[i], j);
             }
 
 #ifdef DEBUG
@@ -169,7 +193,7 @@ int main(int argc, char** argv)
         free(line);
         line = NULL;
         len = 0;
-        cycle = 0;
+        cycle = 1;
         while ((ret = getline(&line, &len, ptracefd)) != -1)
         {
             /* skip over all empty lines */
@@ -203,10 +227,12 @@ int main(int argc, char** argv)
 #endif
 
             /* try to access temp_ptable->pages[j] */
-            if (temp_ptable->pages[j]->valid)
+            if (temp_ptable->pages[j]->valid) /* page hit (in main memory) */
             {
-                /* page hit (in main memory) */
-                temp_ptable->pages[j]->accessed = cycle;
+                if (!strcmp(pageReplacement, OPT_LRU))
+                    temp_ptable->pages[j]->accessed = cycle;
+                else if (!strcmp(pageReplacement, OPT_CLOCK))
+                    accessClock(temp_ptable, j);
             }
             else /* page miss (need to swap) */
             {
