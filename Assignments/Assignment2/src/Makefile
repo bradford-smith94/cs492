@@ -39,6 +39,7 @@ fclean: clean
 
 re: fclean all
 
+# just a quick test using example parameters
 test: debug
 	./$(PRG) ../plist ../ptrace 2 FIFO +
 
@@ -52,11 +53,12 @@ tex: plots
 texclean:
 	$(RM) ../*.aux
 	$(RM) ../*.log
+	$(RM) ../*.dat
 	$(RM) ../*.png
 
 texfclean: texclean
 	$(RM) ../$(PDF)
 
-tar: fclean tex texclean
+tar: tex texclean fclean
 	tar -cvzf ../../$(AUTHOR)_$(PROJECT).tar.gz ../*
 

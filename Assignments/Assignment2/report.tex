@@ -1,6 +1,6 @@
 % Bradford Smith (bsmith8)
 % CS 492 Assignment 2 report.tex
-% 03/24/2016
+% 04/03/2016
 % "I pledge my honor that I have abided by the Stevens Honor System."
 % ====================================================================
 
@@ -12,8 +12,10 @@
 \usepackage{tgbonum}
 \usepackage{textcomp}
 \usepackage{xcolor} %for colored code formatting
+\usepackage{fancyvrb} %for inserting text files
 \usepackage{graphicx} %for inserting images
 \graphicspath{./}
+\usepackage{multicol}
 \pagestyle{empty}
 \setlength{\tabcolsep}{0em}
 
@@ -35,9 +37,25 @@
 \noindent{\today}\\
 \noindent{\textit{``I pledge my honor that I have abided by the Stevens Honor System.''}}\\
 
-\includegraphics{demand_graph}
+\begin{center}
+    \makebox[\textwidth]{\includegraphics[width=\textwidth]{graph}}
+    \Large{Raw Data}
 
-\includegraphics{prepaging_graph}
+    \footnotesize{Page Size | FIFO | LRU | Clock}
+\end{center}
+
+\begin{multicols}{2}
+    \VerbatimInput{demand.dat}
+    \VerbatimInput{prepaging.dat}
+\end{multicols}
+
+\bigskip
+
+\begin{center}
+    \Large{Analysis}
+\end{center}
+
+Start here
 
 \end{document}
 
