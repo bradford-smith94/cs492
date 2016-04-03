@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 2
-# 04/02/2016
+# 04/03/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -59,6 +59,10 @@ texclean:
 texfclean: texclean
 	$(RM) ../$(PDF)
 
-tar: tex texclean fclean
+# call another instance of make to force fclean to run eventhough plots runs it
+# and another to cleanup the tex after the archive is made
+tar: | tex texclean
+	make fclean
 	tar -cvzf ../../$(AUTHOR)_$(PROJECT).tar.gz ../*
+	make texfclean
 
