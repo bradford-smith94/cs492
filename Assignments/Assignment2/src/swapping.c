@@ -47,6 +47,17 @@ void demandSwap(char* method, ptable* tab, int n, int limit, unsigned long cycle
     }
     else /* Clock replacement */
     {
+        /* invalidate one page */
+        i = popClock(tab);
+        if (i > -1)
+            invalidatePage(tab, i);
+
+        /* load faulted page */
+        if (tab->numLoaded < limit)
+        {
+            validatePage(tab, n);
+            pushClock(tab, n);
+        }
     }
 }
 
@@ -119,6 +130,31 @@ void prePagingSwap(char* method, ptable* tab, int n, int limit, unsigned long cy
     }
     else /* Clock replacement */
     {
+        /* invalidate two pages */
+        i = popClock(tab);
+        if (i > -1)
+            invalidatePage(tab, i);
+        i = popClock(tab);
+        if (i > -1)
+            invalidatePage(tab, i);
+
+        /* load the faulted page */
+        if (tab->numLoaded < limit)
+        {
+            validatePage(tab, n);
+            pushClock(tab, n);
+        }
+
+        /* search for the next page that can be loaded */
+        n++;
+        if (n == tab->numPages)
+            n = 0;
+        n = indexOfNextInvalidPage(tab, n);
+        if (n != -1 && tab->numLoaded < limit)
+        {
+            validatePage(tab, n);
+            pushClock(tab, n);
+        }
     }
 }
 
