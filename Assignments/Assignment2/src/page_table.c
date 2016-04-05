@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 page_table.c
- * 04/02/2016
+ * 04/04/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -267,7 +267,11 @@ int popClock(ptable* tab)
             if (tmp->chance) /* set chance to zero and add to end */
             {
                 tmp->chance = 0;
-                tab->fifoHead = tmp->next;
+
+                /* update in place if fifoHead has one element */
+                if (tab->fifoHead->next != NULL)
+                    tab->fifoHead = tmp->next;
+
                 f = tmp;
                 while (f->next != NULL)
                     f = f->next;

@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 2
-# 04/03/2016
+# 04/04/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -33,6 +33,7 @@ debug: all
 
 clean:
 	$(RM) *.o
+	$(RM) vgcore*
 
 fclean: clean
 	$(RM) $(PRG)

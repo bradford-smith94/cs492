@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 2 main.c
- * 04/02/2016
+ * 04/04/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
         if (pageSize <= 0 || !isPowTwo(pageSize) || pageSize > MAX_PAGE_SIZE)
         {
             printf("[ERROR]\tInvalid page size [%s]!\n", argv[3]);
-            printf("       \tPlease use a positive power of 2\n");
+            printf("       \tPlease use a positive power of 2 up to 32\n");
             return 1;
         }
 
