@@ -11,5 +11,8 @@
  */
 void fs_exit()
 {
+    /* close open file descriptors */
+    close(gl.fd_flist);
+    close(gl.fd_dlist);
 }
 

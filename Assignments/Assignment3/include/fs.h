@@ -11,9 +11,23 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h> /* for open */
+#include <sys/stat.h> /* for open */
+#include <fcntl.h> /* for open */
+
+/* global environment wrapper */
+struct s_env {
+    int fd_flist; /* file descriptor for file_list.txt */
+    int fd_dlist; /* file descriptor for dir_list.txt */
+    int dsize; /* disk size */
+    int bsize; /* block size */
+} gl;
 
 /* functions ================================================================ */
 int     main(int, char**);
+void    usage(char*);
+void    parse_args(int, char**);
+
 void    fs_cd(char*);
 void    fs_ls();
 void    fs_mkdir(char*);
