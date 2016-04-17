@@ -9,6 +9,10 @@ AUTHOR=bsmith8
 PROJECT=cs492-assignment3
 FILES=../file_list.txt
 DIRS=../dir_list.txt
+ifndef ROOT
+	ROOT=..
+endif
+
 SRC=main.c fs_cd.c fs_ls.c fs_mkdir.c fs_create.c fs_append.c fs_remove.c \
 	fs_delete.c fs_exit.c fs_dir.c fs_prfiles.c fs_prdisk.c
 OBJ=$(SRC:.c=.o)
@@ -29,8 +33,8 @@ all: $(OBJ) inputs
 
 # generate input files for the program
 inputs:
-	find ../ -type d > $(DIRS)
-	find ../ -type f -ls > $(FILES)
+	find $(ROOT) -type d > $(DIRS)
+	find $(ROOT) -type f -ls > $(FILES)
 
 debug: fclean
 debug: CPPFLAGS+= $(DBFLGS)
