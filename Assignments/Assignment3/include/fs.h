@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/17/2016
+ * 04/19/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -14,6 +14,8 @@
 #include <sys/types.h> /* for open */
 #include <sys/stat.h> /* for open */
 #include <fcntl.h> /* for open */
+
+#include "linkedList.h"
 
 /* global environment wrapper */
 struct s_env {
