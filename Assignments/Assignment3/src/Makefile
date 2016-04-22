@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 3
-# 04/19/2016
+# 04/22/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -9,9 +9,7 @@ AUTHOR=bsmith8
 PROJECT=cs492-assignment3
 FILES=../file_list.txt
 DIRS=../dir_list.txt
-ifndef ROOT
-	ROOT=..
-endif
+ROOT?=..
 
 SRC=main.c usage.c parse_args.c linkedList.c fs_cd.c fs_ls.c fs_mkdir.c \
 	fs_create.c fs_append.c fs_remove.c fs_delete.c fs_exit.c fs_dir.c \
