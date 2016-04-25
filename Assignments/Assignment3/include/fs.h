@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/19/2016
+ * 04/24/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -29,6 +29,7 @@ struct s_env {
 int     main(int, char**);
 void    usage(char*);
 void    parse_args(int, char**);
+char**  str2vect(char*);
 
 void    fs_cd(char*);
 void    fs_ls();

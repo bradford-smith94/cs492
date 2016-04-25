@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 3
-# 04/22/2016
+# 04/24/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -9,11 +9,12 @@ AUTHOR=bsmith8
 PROJECT=cs492-assignment3
 FILES=../file_list.txt
 DIRS=../dir_list.txt
+# assign '..' to ROOT if ROOT is not already set
 ROOT?=..
 
-SRC=main.c usage.c parse_args.c linkedList.c fs_cd.c fs_ls.c fs_mkdir.c \
-	fs_create.c fs_append.c fs_remove.c fs_delete.c fs_exit.c fs_dir.c \
-	fs_prfiles.c fs_prdisk.c
+SRC=main.c usage.c parse_args.c str2vect.c linkedList.c fs_cd.c fs_ls.c \
+	fs_mkdir.c fs_create.c fs_append.c fs_remove.c fs_delete.c fs_exit.c \
+	fs_dir.c fs_prfiles.c fs_prdisk.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
 RM=rm -f
