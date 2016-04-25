@@ -55,14 +55,103 @@ int main(int argc, char** argv)
             fflush(stdout);
 #endif
 
-            /* TODO: use strtok to parse out the command? or turn 'line' into a
-             * vector
+            /* use str2vect to break 'line' into a list of whitespace separated
+             * strings
              */
-        }
+            v = str2vect(line);
 
-        /* TODO: remove this break after checking for commands */
-        break;
+            /* check for commands and execute the proper function */
+            if (!strcmp(v[0], "append"))
+            {
+                if (v[1] != NULL && v[2] != NULL)
+                    fs_append(v[1], atoi(v[2]));
+                else
+                {
+                    printf("usage: append name size\n");
+                    fflush(stdout);
+                }
+            }
+            else if (!strcmp(v[0], "cd"))
+            {
+                if (v[1] != NULL)
+                    fs_cd(v[1]);
+                else
+                {
+                    printf("usage: cd directory\n");
+                    fflush(stdout);
+                }
+            }
+            else if (!strcmp(v[0], "create"))
+            {
+                if (v[1] != NULL)
+                    fs_create(v[1]);
+                else
+                {
+                    printf("usage: create name\n");
+                    fflush(stdout);
+                }
+            }
+            else if (!strcmp(v[0], "delete"))
+            {
+                if (v[1] != NULL)
+                    fs_delete(v[1]);
+                else
+                {
+                    printf("usage: delete name\n");
+                    fflush(stdout);
+                }
+            }
+            else if (!strcmp(v[0], "dir"))
+            {
+                fs_dir();
+            }
+            else if (!strcmp(v[0], "exit"))
+            {
+                break;
+            }
+            else if (!strcmp(v[0], "ls"))
+            {
+                fs_ls();
+            }
+            else if (!strcmp(v[0], "mkdir"))
+            {
+                if (v[1] != NULL)
+                    fs_mkdir(v[1]);
+                else
+                {
+                    printf("usage: mkdir directory\n");
+                    fflush(stdout);
+                }
+            }
+            else if (!strcmp(v[0], "prdisk"))
+            {
+                fs_prdisk();
+            }
+            else if (!strcmp(v[0], "prfiles"))
+            {
+                fs_prfiles();
+            }
+            else if (!strcmp(v[0], "remove"))
+            {
+                if (v[1] != NULL && v[2] != NULL)
+                    fs_remove(v[1], atoi(v[2]));
+                else
+                {
+                    printf("usage: remove name size\n");
+                    fflush(stdout);
+                }
+            }
+            else
+            {
+                printf("Unrecognized command: %s\n", v[0]);
+                fflush(stdout);
+            }
+
+            /* free the vector to avoid memory leaks */
+            free_vect(v);
+        }
     }
+    free(line);
 
     fs_exit();
     return 0;

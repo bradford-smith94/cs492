@@ -30,6 +30,7 @@ int     main(int, char**);
 void    usage(char*);
 void    parse_args(int, char**);
 char**  str2vect(char*);
+void    free_vect(char**);
 
 void    fs_cd(char*);
 void    fs_ls();
