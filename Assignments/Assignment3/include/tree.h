@@ -1,0 +1,28 @@
+/* Bradford Smith (bsmith8)
+ * CS 492 Assignment 3 tree.h
+ * 04/24/2016
+ * "I pledge my honor that I have abided by the Stevens Honor System."
+ */
+
+#ifndef _TREE_H_
+#define _TREE_H_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+#include "linkedList.h"
+
+struct s_leaf {
+    void* data;
+    node* children; /* a linkedList which holds other leaves */
+};
+
+typedef struct s_leaf leaf;
+
+leaf* createLeaf(void*);
+void  appendLeaf(leaf**, leaf*);
+leaf* removeLeaf(leaf**, leaf*);
+
+#endif /* _TREE_H_ */
