@@ -17,6 +17,9 @@
 
 #include "linkedList.h"
 
+/* constant for the prompt string */
+#define PROMPT ">"
+
 /* global environment wrapper */
 struct s_env {
     int fd_flist; /* file descriptor for file_list.txt */

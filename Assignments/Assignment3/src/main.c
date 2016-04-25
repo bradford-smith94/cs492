@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 main.c
- * 04/20/2016
+ * 04/24/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     while (1)
     {
         /* prompt */
-        printf("> ");
+        printf("%s ", PROMPT);
         fflush(stdout);
 
         /* fd 0 is stdin */
@@ -107,6 +107,8 @@ int main(int argc, char** argv)
             }
             else if (!strcmp(v[0], "exit"))
             {
+                /* free the vector immediately and break to exit */
+                free_vect(v);
                 break;
             }
             else if (!strcmp(v[0], "ls"))
@@ -143,7 +145,7 @@ int main(int argc, char** argv)
             }
             else
             {
-                printf("Unrecognized command: %s\n", v[0]);
+                printf("%s: command not found: %s\n", argv[0], v[0]);
                 fflush(stdout);
             }
 
