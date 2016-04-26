@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 tree.h
- * 04/24/2016
+ * 04/26/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "linkedList.h"
+#include "linked_list.h"
 
 struct s_leaf {
     void* data;

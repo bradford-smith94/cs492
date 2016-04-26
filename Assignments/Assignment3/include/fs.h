@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/24/2016
+ * 04/26/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -15,7 +15,7 @@
 #include <sys/stat.h> /* for open */
 #include <fcntl.h> /* for open */
 
-#include "linkedList.h"
+#include "linked_list.h"
 
 /* constant for the prompt string */
 #define PROMPT ">"
