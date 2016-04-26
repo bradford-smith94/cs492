@@ -12,6 +12,19 @@
  */
 leaf* createLeaf(void* data)
 {
+    leaf* ret;
+
+    ret = NULL;
+    if (data != NULL)
+    {
+        if ((ret = (leaf*)malloc(sizeof(leaf))) != NULL)
+        {
+            ret->data = data;
+            ret->children = NULL;
+        }
+    }
+
+    return ret;
 }
 
 /* pre: takes in a leaf** 'tree' and a leaf* 'l'
@@ -19,6 +32,15 @@ leaf* createLeaf(void* data)
  */
 void appendLeaf(leaf** tree, leaf* l)
 {
+    if (l != NULL)
+    {
+        if ((*tree) == NULL)
+            (*tree) = l;
+        else
+        {
+            appendNode(&((*tree)->children), (void*)l);
+        }
+    }
 }
 
 /* pre: takes in a leaf** 'tree' and a leaf* 'l'
@@ -27,5 +49,17 @@ void appendLeaf(leaf** tree, leaf* l)
  */
 leaf* removeLeaf(leaf** tree, leaf* l)
 {
+    leaf* ret;
+
+    ret = NULL;
+    if (l != NULL)
+    {
+        if ((*tree) != NULL)
+        {
+            /* TODO: */
+        }
+    }
+
+    return ret;
 }
 
