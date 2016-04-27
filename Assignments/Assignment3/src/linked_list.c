@@ -46,6 +46,24 @@ void appendNode(node** list, node* n)
     }
 }
 
+/* pre: takes in a node** 'list'
+ * post: removes the first node from 'list'
+ * return: a node* pointing to the node removed from 'list'
+ */
+node* popNode(node** list)
+{
+    node* ret;
+
+    ret = NULL;
+    if ((*list) != NULL)
+    {
+        ret = (*list);
+        (*list) = (*list)->next;
+    }
+
+    return ret;
+}
+
 /* pre: takes in a node** 'list' and a node* 'n'
  * post: removes 'n' from the linked list pointed to by 'list'
  * return: a node* pointing to the node that was removed from 'list'

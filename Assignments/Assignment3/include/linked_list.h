@@ -21,6 +21,7 @@ typedef struct s_node node;
 
 node*   createNode(void*);
 void    appendNode(node**, node*);
+node*   popNode(node**);
 node*   removeNode(node**, node*);
 
 #endif /* _LINKED_LIST_H_ */

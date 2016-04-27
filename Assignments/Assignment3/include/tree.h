@@ -16,7 +16,7 @@
 
 struct s_leaf {
     void* data;
-    node* children; /* a linkedList which holds other leaves */
+    node* children; /* a linked_list which holds other leaves */
 };
 
 typedef struct s_leaf leaf;
