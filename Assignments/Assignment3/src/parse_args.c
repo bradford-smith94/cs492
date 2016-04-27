@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 parse_args.c
- * 04/20/2016
+ * 04/27/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -59,5 +59,8 @@ void parse_args(int argc, char** argv)
                 exit(-1);
         }
     }
+
+    /* total number of blocks is disk size divided by block size */
+    gl.numBlocks = gl.dsize / gl.bsize;
 }
 

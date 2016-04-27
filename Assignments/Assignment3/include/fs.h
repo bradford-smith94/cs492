@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/26/2016
+ * 04/27/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -14,11 +14,25 @@
 #include <sys/types.h> /* for open */
 #include <sys/stat.h> /* for open */
 #include <fcntl.h> /* for open */
+#include <time.h>
 
 #include "linked_list.h"
+#include "tree.h"
 
 /* constant for the prompt string */
 #define PROMPT ">"
+
+/* struct to define 'file' */
+struct s_file {
+    char* name;
+    int size;
+    time_t timestamp;
+    char isDirectory;
+    /* something for Lfile */
+};
+
+/* avoid typing `struct` everywhere */
+typedef struct s_file fs_file;
 
 /* global environment wrapper */
 struct s_env {
@@ -26,6 +40,7 @@ struct s_env {
     int fd_dlist; /* file descriptor for dir_list.txt */
     int dsize; /* disk size */
     int bsize; /* block size */
+    int numBlocks;
 } gl;
 
 /* functions ================================================================ */

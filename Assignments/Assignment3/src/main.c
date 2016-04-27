@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 main.c
- * 04/24/2016
+ * 04/27/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -23,6 +23,8 @@ int main(int argc, char** argv)
 
     /* parse args and setup global environment */
     parse_args(argc, argv);
+
+    /* TODO: read input files and initialize filesystem */
 
     /* main command reading loop */
     line = (char*)malloc(256 * sizeof(char));
@@ -51,7 +53,7 @@ int main(int argc, char** argv)
             line[n - 1] = '\0';
 
 #ifdef DEBUG
-            printf("Read line: <%s>\n", line);
+            printf("[DEBUG]\tRead line: <%s>\n", line);
             fflush(stdout);
 #endif
 
