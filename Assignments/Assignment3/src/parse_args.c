@@ -60,6 +60,9 @@ void parse_args(int argc, char** argv)
         }
     }
 
+    /* save the name of the executable in the global environment */
+    gl.executable = argv[0];
+
     /* total number of blocks is disk size divided by block size */
     gl.numBlocks = gl.dsize / gl.bsize;
 }

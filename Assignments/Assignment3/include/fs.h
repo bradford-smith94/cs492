@@ -22,13 +22,23 @@
 /* constant for the prompt string */
 #define PROMPT ">"
 
-/* struct to define 'file' */
+/* constant for the max length (in charcters) of a single command */
+#define CMD_LEN 256
+
+/* struct to define a 'block' */
+struct s_block {
+    int s_addr; /* start address */
+    int e_addr; /* end address */
+    char isFree;
+};
+
+/* struct to define a 'file' */
 struct s_file {
     char* name;
     int size;
     time_t timestamp;
     char isDirectory;
-    /* something for Lfile */
+    node* lfile; /* linked_list of block addresses */
 };
 
 /* avoid typing `struct` everywhere */
@@ -36,17 +46,20 @@ typedef struct s_file fs_file;
 
 /* global environment wrapper */
 struct s_env {
+    char* executable; /* name of the executable file */
     int fd_flist; /* file descriptor for file_list.txt */
     int fd_dlist; /* file descriptor for dir_list.txt */
     int dsize; /* disk size */
     int bsize; /* block size */
-    int numBlocks;
+    int numBlocks; /* total number of blocks (dsize/bsize) */
+    leaf* tree; /* filesystem hierarchy */
 } gl;
 
 /* functions ================================================================ */
 int     main(int, char**);
 void    usage(char*);
 void    parse_args(int, char**);
+void    init();
 char**  str2vect(char*);
 void    free_vect(char**);
 

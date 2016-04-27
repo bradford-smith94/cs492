@@ -24,10 +24,11 @@ int main(int argc, char** argv)
     /* parse args and setup global environment */
     parse_args(argc, argv);
 
-    /* TODO: read input files and initialize filesystem */
+    /* read input files and initialize filesystem */
+    init();
 
     /* main command reading loop */
-    line = (char*)malloc(256 * sizeof(char));
+    line = (char*)malloc(CMD_LEN * sizeof(char));
     while (1)
     {
         /* prompt */
@@ -35,7 +36,7 @@ int main(int argc, char** argv)
         fflush(stdout);
 
         /* fd 0 is stdin */
-        if ((n = read(0, line, 256)) == -1)
+        if ((n = read(0, line, CMD_LEN)) == -1)
         {
             perror(argv[0]);
 
