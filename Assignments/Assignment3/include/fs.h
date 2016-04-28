@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/27/2016
+ * 04/28/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -32,10 +32,14 @@ struct s_block {
     char isFree;
 };
 
+/* avoid typing `struct` everywhere */
+typedef struct s_block fs_block;
+
 /* struct to define a 'file' */
 struct s_file {
     char* name;
     int size; /* file size in bytes */
+    int allocatedBlocks;
     time_t timestamp;
     char isDirectory;
     node* lfile; /* linked_list of block addresses */
@@ -52,6 +56,7 @@ struct s_env {
     int dsize; /* disk size */
     int bsize; /* block size */
     int numBlocks; /* total number of blocks (dsize/bsize) */
+    node* ldisk; /* lined_list for disk blocks */
     leaf* tree; /* filesystem hierarchy */
 } gl;
 
@@ -64,7 +69,9 @@ char**      str2vect(char*);
 void        free_vect(char**);
 
 /* grouped in file.c */
+fs_block*   createBlock(int, int, char);
 fs_file*    createFile(char*, int, char);
+void        allocateFile(fs_file*);
 
 /* functions for handling user commands */
 void        fs_cd(char*);

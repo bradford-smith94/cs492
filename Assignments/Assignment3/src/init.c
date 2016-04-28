@@ -21,8 +21,15 @@ void init()
     FILE* dir_stream;
     FILE* file_stream;
 
-    /* make sure the tree starts as NULL */
+    /* make sure gl.tree starts as NULL */
     gl.tree = NULL;
+
+    /* total number of blocks is disk size divided by block size */
+    gl.numBlocks = gl.dsize / gl.bsize;
+
+    /* initialize gl.ldisk to one node where all blocks are free */
+    gl.ldisk = NULL;
+    appendNode(&gl.ldisk, (void*)createBlock(0, gl.numBlocks, 1));
 
     /* open streams on the file descriptors */
     if ((dir_stream = fdopen(gl.fd_dlist, "r")) == NULL)
@@ -67,7 +74,8 @@ void init()
         fflush(stdout);
 #endif
 
-        /* TODO: create directories and add them to the tree */
+        /* create directories and add them to the tree */
+        appendLeaf(&gl.tree, (void*)createFile(line, 0, 1));
 
         free(line);
         s = 0;
@@ -107,6 +115,7 @@ void init()
 #endif
 
         /* TODO: create files and add them to the tree and disk */
+        createFile(vect[7], atoi(vect[6]), 0);
 
         free_vect(vect);
         free(line);
