@@ -35,7 +35,7 @@ struct s_block {
 /* struct to define a 'file' */
 struct s_file {
     char* name;
-    int size;
+    int size; /* file size in bytes */
     time_t timestamp;
     char isDirectory;
     node* lfile; /* linked_list of block addresses */
@@ -56,23 +56,27 @@ struct s_env {
 } gl;
 
 /* functions ================================================================ */
-int     main(int, char**);
-void    usage(char*);
-void    parse_args(int, char**);
-void    init();
-char**  str2vect(char*);
-void    free_vect(char**);
+int         main(int, char**);
+void        usage(char*);
+void        parse_args(int, char**);
+void        init();
+char**      str2vect(char*);
+void        free_vect(char**);
 
-void    fs_cd(char*);
-void    fs_ls();
-void    fs_mkdir(char*);
-void    fs_create(char*);
-void    fs_append(char*, int);
-void    fs_remove(char*, int);
-void    fs_delete(char*);
-void    fs_exit();
-void    fs_dir();
-void    fs_prfiles();
-void    fs_prdisk();
+/* grouped in file.c */
+fs_file*    createFile(char*, int, char);
+
+/* functions for handling user commands */
+void        fs_cd(char*);
+void        fs_ls();
+void        fs_mkdir(char*);
+void        fs_create(char*);
+void        fs_append(char*, int);
+void        fs_remove(char*, int);
+void        fs_delete(char*);
+void        fs_exit();
+void        fs_dir();
+void        fs_prfiles();
+void        fs_prdisk();
 
 #endif /* _FS_H_ */

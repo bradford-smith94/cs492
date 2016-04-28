@@ -1,8 +1,10 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 str2vect.c
- * 04/24/2016
+ * 04/28/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
+
+#define SILENCED
 
 #include "fs.h"
 
@@ -24,7 +26,7 @@ char** str2vect(char *s)
     w = 0;
     len = 1;
     last = '\0';
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
     printf("[str2vect.c]\nstart loop 1\n");
     fflush(stdout);
 #endif
@@ -36,7 +38,7 @@ char** str2vect(char *s)
         last = s[i];
         len++;
     } /* found number of words and length */
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
     printf("length: %d\nwords: %d\n", len, w);
     fflush(stdout);
 #endif
@@ -51,7 +53,7 @@ char** str2vect(char *s)
     c = 0;
     w = 0;
     last = '\0';
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
     printf("start loop 2\n");
     fflush(stdout);
 #endif
@@ -61,7 +63,7 @@ char** str2vect(char *s)
             c++;
         else if (c != 0)
         {
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
             printf("Word size: %d\n", c);
             fflush(stdout);
 #endif
@@ -74,7 +76,7 @@ char** str2vect(char *s)
     c = 0;
     w = 0;
     last = '\0';
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
     printf("start loop 3\n");
     fflush(stdout);
 #endif
@@ -82,7 +84,7 @@ char** str2vect(char *s)
     {
         if (s[i] != ' ' && s[i] != '\t' && s[i] != '\0')
         {
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
             printf("adding a letter\n");
             fflush(stdout);
 #endif
@@ -90,7 +92,7 @@ char** str2vect(char *s)
         }
         else if (last != ' ' && last != '\t' && last != '\0')
         {
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
             printf("adding a \\0\n");
             fflush(stdout);
 #endif
@@ -100,7 +102,7 @@ char** str2vect(char *s)
         last = s[i];
     } /* copied words to vect */
     vect[w] = NULL; /* added last NULL */
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(SILENCED)
     printf("[str2vect.c] returning\n");
     fflush(stdout);
 #endif

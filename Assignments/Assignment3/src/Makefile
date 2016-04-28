@@ -13,8 +13,8 @@ DIRS=../dir_list.txt
 ROOT?=..
 
 SRC=main.c usage.c parse_args.c str2vect.c free_vect.c linked_list.c tree.c \
-	init.c fs_cd.c fs_ls.c fs_mkdir.c fs_create.c fs_append.c fs_remove.c \
-	fs_delete.c fs_exit.c fs_dir.c fs_prfiles.c fs_prdisk.c
+	init.c file.c fs_cd.c fs_ls.c fs_mkdir.c fs_create.c fs_append.c \
+	fs_remove.c fs_delete.c fs_exit.c fs_dir.c fs_prfiles.c fs_prdisk.c
 OBJ=$(SRC:.c=.o)
 CC=gcc
 RM=rm -f
