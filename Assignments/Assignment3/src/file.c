@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 file.c
- * 04/28/2016
+ * 04/29/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -55,8 +55,8 @@ fs_file* createFile(char* name, int size, char isDirectory)
  */
 void splitLdiskNode(int index)
 {
-    node* n;
-    fs_block* b;
+    node* n; /* temp node */
+    fs_block* b; /* temp block */
 
     n = gl.ldisk;
     b = (fs_block*)(n->data);
@@ -80,6 +80,34 @@ void splitLdiskNode(int index)
             b->isFree = 0;
         }
         /* else fail silently, future me might hate me for this */
+    }
+}
+
+/* pre: gl.ldisk has been created
+ * post: merges all contiguous nodes in gl.ldisk that are in the same state
+ *      (free/used)
+ */
+void mergeLdiskNodes()
+{
+    node* n; /* temp node */
+    fs_block* b; /* temp block */
+    fs_block* nb; /* temp next block */
+
+    n = gl.ldisk;
+    b = (fs_block*)(n->data);
+
+    while (n != NULL && n->next != NULL)
+    {
+        nb = (fs_block*)(n->next->data);
+
+        /* if this block and the next block have the same state, merge them */
+        if (b->isFree == nb->isFree)
+        {
+            b->e_addr = nb->e_addr;
+            free(removeNode(n, n->next));
+        }
+
+        n = n->next;
     }
 }
 
@@ -126,6 +154,7 @@ void allocateFile(fs_file* file)
         }
     }
 
-    /* TODO: merge nodes in gl.ldisk */
+    /* merge nodes in gl.ldisk */
+    mergeLdiskNodes();
 }
 

@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/28/2016
+ * 04/29/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -75,6 +75,7 @@ void        free_vect(char**);
 fs_block*   createBlock(int, int, char);
 fs_file*    createFile(char*, int, char);
 void        splitLdiskNode(int);
+void        mergeLdiskNodes();
 void        allocateFile(fs_file*);
 
 /* functions for handling user commands */

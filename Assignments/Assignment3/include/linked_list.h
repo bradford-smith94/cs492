@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 linked_list.h
- * 04/28/2016
+ * 04/29/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -24,6 +24,6 @@ void    appendNode(node**, node*);
 void    prependNode(node**, node*);
 void    insertNode(node*, node*);
 node*   popNode(node**);
-node*   removeNode(node**, node*);
+node*   removeNode(node*, node*);
 
 #endif /* _LINKED_LIST_H_ */
