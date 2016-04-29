@@ -118,8 +118,9 @@ void mergeLdiskNodes()
 void allocateFile(fs_file* file)
 {
     int numBlocksNeeded; /* the number of blocks needed by the file */
-    fs_block* b;
-    node* n;
+    int i; /* loop counter */
+    fs_block* b; /* temp block */
+    node* n; /* temp node */
 
     numBlocksNeeded = file->size / gl.bsize;
     n = gl.ldisk;
@@ -129,7 +130,9 @@ void allocateFile(fs_file* file)
     {
         /* iterate forward over gl.ldisk to find the next free node */
         for (; n != NULL && !(((fs_block*)(n->data))->isFree); n = n->next)
-            ;
+            ; /* note empty loop */
+
+        /* if we reached the end without allocating the whole file */
         if (n == NULL)
         {
             fprintf(stderr, "%s: Out of space\n", gl.executable);
@@ -141,15 +144,29 @@ void allocateFile(fs_file* file)
         else
         {
             b = (fs_block*)(n->data);
+
+            /* if only part of the node is needed */
             if (b->e_addr - b->s_addr > numBlocksNeeded)
             {
                 file->allocatedBlocks += numBlocksNeeded;
-                /* TODO: update gl.ldisk */
+
+                /* update file->lfile */
+                for (i = b->s_addr; i < b->e_addr; i++)
+                    appendNode(&(file->lfile), (void*)createBlock(i, i + 1, 0));
+
+                /* update gl.ldisk */
+                splitLdiskNode(b->s_addr + numBlocksNeeded);
             }
-            else
+            else /* else the whole node is needed */
             {
                 file->allocatedBlocks += b->e_addr - b->s_addr;
-                /* TODO: update gl.ldisk */
+
+                /* update file->lfile */
+                for (i = b->s_addr; i < b->s_addr + numBlocksNeeded; i++)
+                    appendNode(&(file->lfile), (void*)createBlock(i, i + 1, 0));
+
+                /* update gl.ldisk */
+                b->isFree = 0;
             }
         }
     }

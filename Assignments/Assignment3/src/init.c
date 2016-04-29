@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 init.c
- * 04/28/2016
+ * 04/29/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -20,6 +20,7 @@ void init()
     char** vect;
     FILE* dir_stream;
     FILE* file_stream;
+    fs_file* f; /* temp file */
 
     /* make sure gl.tree starts as NULL */
     gl.tree = NULL;
@@ -114,8 +115,10 @@ void init()
         fflush(stdout);
 #endif
 
-        /* TODO: create files and add them to the tree and disk */
-        createFile(vect[7], atoi(vect[6]), 0);
+        /* create files and add them to the tree and disk */
+        f = createFile(vect[7], atoi(vect[6]), 0);
+        appendLeaf(&gl.tree, (void*)f);
+        allocateFile(f);
 
         free_vect(vect);
         free(line);
