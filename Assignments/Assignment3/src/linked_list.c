@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 linked_list.c
- * 04/19/2016
+ * 04/28/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -44,6 +44,24 @@ void appendNode(node** list, node* n)
             (*list)->next = n;
         }
     }
+}
+
+/* pre: takes in a node** 'list' and a node* 'n'
+ * post: prepends 'n' to the beginning of the linked list pointed to by 'list'
+ */
+void prependNode(node** list, node* n)
+{
+    n->next = (*list);
+    list = &n;
+}
+
+/* pre: takes in a node* 'first' and a node* 'second'
+ * post: inserts 'second' into the linked list right after 'first'
+ */
+void insertNode(node* first, node* second)
+{
+    second->next = first->next;
+    first->next = second;
 }
 
 /* pre: takes in a node** 'list'

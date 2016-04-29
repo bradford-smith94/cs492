@@ -25,7 +25,10 @@
 /* constant for the max length (in charcters) of a single command */
 #define CMD_LEN 256
 
-/* struct to define a 'block' */
+/* struct to define a 'block'
+ *      end address should be the next start address, e.g. a single block with
+ *      `s_addr = n` will have `e_addr = n + 1`
+ */
 struct s_block {
     int s_addr; /* start address */
     int e_addr; /* end address */
@@ -71,6 +74,7 @@ void        free_vect(char**);
 /* grouped in file.c */
 fs_block*   createBlock(int, int, char);
 fs_file*    createFile(char*, int, char);
+void        splitLdiskNode(int);
 void        allocateFile(fs_file*);
 
 /* functions for handling user commands */

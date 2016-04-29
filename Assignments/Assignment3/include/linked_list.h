@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 linked_list.h
- * 04/26/2016
+ * 04/28/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -21,6 +21,8 @@ typedef struct s_node node;
 
 node*   createNode(void*);
 void    appendNode(node**, node*);
+void    prependNode(node**, node*);
+void    insertNode(node*, node*);
 node*   popNode(node**);
 node*   removeNode(node**, node*);
 

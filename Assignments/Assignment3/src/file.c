@@ -49,20 +49,55 @@ fs_file* createFile(char* name, int size, char isDirectory)
     return ret;
 }
 
+/* pre: takes in an int 'index' and gl.ldisk has been created
+ * post: splits gl.ldisk at 'index' such that 'index' starts a new node in
+ *      gl.ldisk, and sets the block on the left of the split as used
+ */
+void splitLdiskNode(int index)
+{
+    node* n;
+    fs_block* b;
+
+    n = gl.ldisk;
+    b = (fs_block*)(n->data);
+
+    /* if first node needs to be split */
+    if (index < b->e_addr && index >= b->s_addr)
+    {
+        b->s_addr = index;
+        prependNode(&gl.ldisk, createNode((void*)createBlock(0, index, 0)));
+    }
+    else
+    {
+        /* while node is not NULL and index is not in this block */
+        while (n != NULL && !(index < b->e_addr && index >= b->s_addr))
+            n = n->next;
+
+        if (n != NULL)
+        {
+            insertNode(n, createNode((void*)createBlock(index, b->e_addr, 1)));
+            b->e_addr = index;
+            b->isFree = 0;
+        }
+        /* else fail silently, future me might hate me for this */
+    }
+}
+
 /* pre: takes in a fs_file* 'file' that has been initialized, and gl.ldisk has
  *      been created
  * post: allocates blocks for 'file'
  */
 void allocateFile(fs_file* file)
 {
-    int numBlocksNeeded;
+    int numBlocksNeeded; /* the number of blocks needed by the file */
+    fs_block* b;
     node* n;
 
     numBlocksNeeded = file->size / gl.bsize;
     n = gl.ldisk;
 
     /* only allocate if the number of needed blocks has changed */
-    for (; numBlocksNeeded > file->allocatedBlocks; file->allocatedBlocks++)
+    while (numBlocksNeeded > file->allocatedBlocks)
     {
         /* iterate forward over gl.ldisk to find the next free node */
         for (; n != NULL && !(((fs_block*)(n->data))->isFree); n = n->next)
@@ -77,8 +112,20 @@ void allocateFile(fs_file* file)
         }
         else
         {
-            /* TODO: update gl.ldisk */
+            b = (fs_block*)(n->data);
+            if (b->e_addr - b->s_addr > numBlocksNeeded)
+            {
+                file->allocatedBlocks += numBlocksNeeded;
+                /* TODO: update gl.ldisk */
+            }
+            else
+            {
+                file->allocatedBlocks += b->e_addr - b->s_addr;
+                /* TODO: update gl.ldisk */
+            }
         }
     }
+
+    /* TODO: merge nodes in gl.ldisk */
 }
 
