@@ -157,7 +157,7 @@ void allocateFile(fs_file* file)
 
                 /* update file->lfile */
                 for (i = b->s_addr; i < b->e_addr; i++)
-                    appendNode(&(file->lfile), (void*)createBlock(i, i + 1, 0));
+                    appendNode(&(file->lfile), createNode((void*)createBlock(i, i + 1, 0)));
 
                 /* update gl.ldisk */
                 splitLdiskNode(b->s_addr + numBlocksNeeded);
@@ -168,7 +168,7 @@ void allocateFile(fs_file* file)
 
                 /* update file->lfile */
                 for (i = b->s_addr; i < b->s_addr + numBlocksNeeded; i++)
-                    appendNode(&(file->lfile), (void*)createBlock(i, i + 1, 0));
+                    appendNode(&(file->lfile), createNode((void*)createBlock(i, i + 1, 0)));
 
                 /* update gl.ldisk */
                 b->isFree = 0;

@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 main.c
- * 04/27/2016
+ * 04/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -29,6 +29,7 @@ int main(int argc, char** argv)
 
     /* main command reading loop */
     line = (char*)malloc(CMD_LEN * sizeof(char));
+    bzero((void*)line, CMD_LEN * sizeof(char));
     while (1)
     {
         /* prompt */

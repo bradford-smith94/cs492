@@ -41,10 +41,11 @@ debug: CPPFLAGS+= $(DBFLGS)
 debug: all
 
 test: debug
-	./$(PRG) -f $(FILES) -d $(DIRS) -b 16 -s 4096
+	./$(PRG) -f $(FILES) -d $(DIRS) -b 16 -s 262144
 
 clean:
 	$(RM) *.o
+	$(RM) *core*
 
 fclean: clean
 	$(RM) $(DIRS)

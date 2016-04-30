@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 str2vect.c
- * 04/28/2016
+ * 04/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -43,7 +43,7 @@ char** str2vect(char *s)
     fflush(stdout);
 #endif
     if (w > 0)
-        vect = (char**)malloc(w*sizeof(char*)+1);
+        vect = (char**)malloc((w+1)*sizeof(char*));
     else
     {
         vect = (char**)malloc(sizeof(char*));
@@ -67,7 +67,7 @@ char** str2vect(char *s)
             printf("Word size: %d\n", c);
             fflush(stdout);
 #endif
-            vect[w++] = (char*)malloc(c*sizeof(char)+1);
+            vect[w++] = (char*)malloc((c+1)*sizeof(char));
             c = 0;
         }
         last = s[i];

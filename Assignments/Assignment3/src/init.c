@@ -30,7 +30,7 @@ void init()
 
     /* initialize gl.ldisk to one node where all blocks are free */
     gl.ldisk = NULL;
-    appendNode(&gl.ldisk, (void*)createBlock(0, gl.numBlocks, 1));
+    appendNode(&gl.ldisk, createNode((void*)createBlock(0, gl.numBlocks, 1)));
 
     /* open streams on the file descriptors */
     if ((dir_stream = fdopen(gl.fd_dlist, "r")) == NULL)

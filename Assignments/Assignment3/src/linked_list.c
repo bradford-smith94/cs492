@@ -40,7 +40,7 @@ void appendNode(node** list, node* n)
         else
         {
             for (; (*list)->next != NULL; list = &((*list)->next))
-                ; /* note the empy loop */
+                ; /* note the empty loop */
             (*list)->next = n;
         }
     }
