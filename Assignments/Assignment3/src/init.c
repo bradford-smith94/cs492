@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 init.c
- * 04/29/2016
+ * 04/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -76,7 +76,7 @@ void init()
 #endif
 
         /* create directories and add them to the tree */
-        appendLeaf(&gl.tree, (void*)createFile(line, 0, 1));
+        addToHierarchy(createFile(line, 0, 1));
 
         free(line);
         s = 0;
@@ -116,13 +116,17 @@ void init()
 #endif
 
         /* create files and add them to the tree and disk */
-        f = createFile(vect[7], atoi(vect[6]), 0);
-        appendLeaf(&gl.tree, (void*)f);
+        f = createFile(vect[10], atoi(vect[6]), 0);
+
+        addToHierarchy(f);
         allocateFile(f);
 
         free_vect(vect);
         free(line);
         s = 0;
     }
+
+    /* initialize gl.cur_dir to be the root of the tree */
+    gl.cur_dir = gl.tree;
 }
 

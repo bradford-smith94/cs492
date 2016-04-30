@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/29/2016
+ * 04/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -21,6 +21,9 @@
 
 /* constant for the prompt string */
 #define PROMPT ">"
+
+/* constant for the directory path separator character */
+#define PATH_SEP '/'
 
 /* constant for the max length (in charcters) of a single command */
 #define CMD_LEN 256
@@ -61,6 +64,7 @@ struct s_env {
     int numBlocks; /* total number of blocks (dsize/bsize) */
     node* ldisk; /* lined_list for disk blocks */
     leaf* tree; /* filesystem hierarchy */
+    leaf* cur_dir; /* pointer to the tree node for the current directory */
 } gl;
 
 /* functions ================================================================ */
@@ -77,6 +81,9 @@ fs_file*    createFile(char*, int, char);
 void        splitLdiskNode(int);
 void        mergeLdiskNodes();
 void        allocateFile(fs_file*);
+leaf*       findInHierarchy(char*);
+void        addToHierarchy(fs_file*);
+int         countPathSeparations(char*);
 
 /* functions for handling user commands */
 void        fs_cd(char*);

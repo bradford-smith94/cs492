@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 file.c
- * 04/29/2016
+ * 04/30/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -125,6 +125,11 @@ void allocateFile(fs_file* file)
     numBlocksNeeded = file->size / gl.bsize;
     n = gl.ldisk;
 
+#ifdef DEBUG
+    printf("[DEBUG]\tAllocating file <%s>\n", file->name);
+    fflush(stdout);
+#endif
+
     /* only allocate if the number of needed blocks has changed */
     while (numBlocksNeeded > file->allocatedBlocks)
     {
@@ -173,5 +178,126 @@ void allocateFile(fs_file* file)
 
     /* merge nodes in gl.ldisk */
     mergeLdiskNodes();
+#ifdef DEBUG
+    printf("[DEBUG]\tAllocated File\n");
+    fflush(stdout);
+#endif
+}
+
+/* pre: takes in a char* 'name', the data stored in the nodes of gl.tree must be
+ *      of the type fs_file*
+ * post: finds the the tree node in gl.tree that holds a fs_file* with the name
+ *      'name'
+ * return: a leaf* that points to the node in gl.tree that holds an fs_file*
+ *      with the name 'name', or NULL if such a node is not found
+ */
+leaf* findInHierarchy(char* name)
+{
+    leaf* ret;
+    leaf* t; /* temp tree */
+    node* n;
+    node* neighbors; /* linked_list to hold the order for BFS */
+
+    ret = NULL;
+    t = gl.tree;
+
+#ifdef DEBUG
+    printf("[DEBUG]\tFind <%s> in gloabl tree\n", name);
+    fflush(stdout);
+#endif
+
+    /* while node is not null and it's name doesn't match */
+    while (t != NULL && strcmp(name, ((fs_file*)(t->data))->name))
+    {
+        if ((n = t->children) != NULL)
+        {
+            do /* add all children to the neighbors queue */
+            {
+                appendNode(&neighbors, n);
+            } while ((n = n->next) != NULL);
+        }
+
+        if ((n = popNode(&neighbors)) != NULL)
+        {
+            t = (leaf*)(n->data);
+        }
+        else
+            t = NULL;
+    }
+
+    return ret;
+}
+
+/* pre: takes in a fs_file* 'file' which must be either a valid file or
+ *      directory
+ * post: adds 'file' to the appropriate position in gl.tree, if the name of
+ *      'file' contains 'PATH_SEP' then these are followed to add 'file' as a
+ *      child of the appropriate tree node, else 'file' is added as a child of
+ *      gl.cur_dir
+ */
+void addToHierarchy(fs_file* file)
+{
+    char* name;
+    char* part;
+    char delim[2];
+    leaf* pd; /* temp tree node (parent dir) */
+    int p; /* num path separations */
+
+    delim[0] = PATH_SEP;
+    delim[1] = '\0';
+    name = strdup(file->name);
+
+#ifdef DEBUG
+    printf("[DEBUG]\tAdding <%s> to the global tree\n", file->name);
+    fflush(stdout);
+#endif
+
+    if ((p = countPathSeparations(name)))
+    {
+        part = strtok(name, delim);
+        if (part == NULL)
+            part = delim;
+        pd = findInHierarchy(part);
+        while (p--)
+        {
+            part = strtok(NULL, delim);
+            if (p > 0)
+                pd = findInHierarchy(part);
+        }
+
+#ifdef DEBUG
+        printf("[DEBUG]\t<%s> name shortened to <%s>\n", file->name, part);
+        fflush(stdout);
+#endif
+
+        /* we're making the file name shorter so strcpy should be fine */
+        file->name = strcpy(file->name, part);
+        /* TODO: possible memory leak? */
+    }
+    else
+        pd = gl.cur_dir;
+
+    free(name);
+
+    /* append to the tree */
+    appendLeaf(&pd, createLeaf((void*)file));
+}
+
+/* pre: takes in a char* 'fname' which is a file name
+ * post: counts the number of occurances of the path separator 'PATH_SEP' in
+ *      'fname'
+ * return: an integer which is the number of occurances of 'PATH_SEP' in 'fname'
+ */
+int countPathSeparations(char* fname)
+{
+    int count;
+    int i;
+
+    count = 0;
+    for (i = 0; i < strlen(fname); i++)
+        if (fname[i] == PATH_SEP)
+            count++;
+
+    return count;
 }
 
