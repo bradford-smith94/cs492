@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # CS 492 Assignment 3 README.txt
-# 04/17/2016
+# 05/01/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -13,7 +13,9 @@ A note on `file_list.txt` and `dir_list.txt`:
     the "root" for generating the input files but this can be changed by
     defining the `ROOT` variable. (e.g. `make inputs ROOT=~` will generate input
     files using the user's home directory as the "root", and this also works for
-    the default `all` target, i.e `make ROOT=~`)
+    the default `all` target, i.e `make ROOT=~`) These files will only be
+    generated if they do not already exist, so the program can still be used
+    with preexisting input files.
 
 To run the code:
     Use the Makefile to compile the program, `make` should be sufficient in most

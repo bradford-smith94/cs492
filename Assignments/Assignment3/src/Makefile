@@ -28,10 +28,16 @@ CFLAGS+= $(INCLPATH)
 CPPFLAGS+= -pedantic-errors -Wall
 DBFLGS= -g -DDEBUG
 
-all: $(OBJ) inputs
+all: $(OBJ) $(FILES) $(DIRS)
 	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $(PRG)
 
 # generate input files for the program
+$(FILES):
+	find $(ROOT) -type f -ls > $(FILES)
+
+$(DIRS):
+	find $(ROOT) -type d > $(DIRS)
+
 inputs:
 	find $(ROOT) -type d > $(DIRS)
 	find $(ROOT) -type f -ls > $(FILES)
