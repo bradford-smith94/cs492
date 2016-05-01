@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 3
-# 04/30/2016
+# 05/01/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -42,6 +42,9 @@ debug: all
 
 test: debug
 	./$(PRG) -f $(FILES) -d $(DIRS) -b 16 -s 262144
+
+valgrind: debug
+	valgrind --track-origins=yes ./$(PRG) -f $(FILES) -d $(DIRS) -b 16 -s 262144
 
 clean:
 	$(RM) *.o

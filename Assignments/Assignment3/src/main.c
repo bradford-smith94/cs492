@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 main.c
- * 04/30/2016
+ * 05/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -84,6 +84,10 @@ int main(int argc, char** argv)
                     printf("usage: cd directory\n");
                     fflush(stdout);
                 }
+            }
+            else if (!strcmp(v[0], "cd..")) /* just in case this is the intended command */
+            {
+                fs_cd("..");
             }
             else if (!strcmp(v[0], "create"))
             {

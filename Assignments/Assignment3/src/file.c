@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 file.c
- * 04/30/2016
+ * 05/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -126,13 +126,18 @@ void allocateFile(fs_file* file)
     n = gl.ldisk;
 
 #ifdef DEBUG
-    printf("[DEBUG]\tAllocating file <%s>\n", file->name);
+    printf("[DEBUG]\tAllocating file <%s> needs %d blocks\n",
+            file->name, numBlocksNeeded);
     fflush(stdout);
 #endif
 
     /* only allocate if the number of needed blocks has changed */
     while (numBlocksNeeded > file->allocatedBlocks)
     {
+#ifdef DEBUG
+        printf("[DEBUG]\tAllocated %d blocks so far\n", file->allocatedBlocks);
+        fflush(stdout);
+#endif
         /* iterate forward over gl.ldisk to find the next free node */
         for (; n != NULL && !(((fs_block*)(n->data))->isFree); n = n->next)
             ; /* note empty loop */
@@ -148,26 +153,43 @@ void allocateFile(fs_file* file)
         }
         else
         {
+#ifdef DEBUG
+            printf("[DEBUG]\tfound a free node to allocate\n");
+            fflush(stdout);
+#endif
             b = (fs_block*)(n->data);
 
             /* if only part of the node is needed */
             if (b->e_addr - b->s_addr > numBlocksNeeded)
             {
+#ifdef DEBUG
+                printf("[DEBUG]\tonly need part of it\n");
+                fflush(stdout);
+#endif
+                /* update file->lfile */
+                for (i = b->s_addr; i < b->s_addr + numBlocksNeeded; i++)
+                    appendNode(&(file->lfile), createNode((void*)createBlock(i, i + 1, 0)));
+
                 file->allocatedBlocks += numBlocksNeeded;
 
-                /* update file->lfile */
-                for (i = b->s_addr; i < b->e_addr; i++)
-                    appendNode(&(file->lfile), createNode((void*)createBlock(i, i + 1, 0)));
+#ifdef DEBUG
+                printf("[DEBUG]\tneed to split the ldisk node now\n");
+                fflush(stdout);
+#endif
 
                 /* update gl.ldisk */
                 splitLdiskNode(b->s_addr + numBlocksNeeded);
             }
             else /* else the whole node is needed */
             {
+#ifdef DEBUG
+                printf("[DEBUG]\tneed the whole node\n");
+                fflush(stdout);
+#endif
                 file->allocatedBlocks += b->e_addr - b->s_addr;
 
                 /* update file->lfile */
-                for (i = b->s_addr; i < b->s_addr + numBlocksNeeded; i++)
+                for (i = b->s_addr; i < b->e_addr; i++)
                     appendNode(&(file->lfile), createNode((void*)createBlock(i, i + 1, 0)));
 
                 /* update gl.ldisk */
@@ -202,7 +224,7 @@ leaf* findInHierarchy(char* name)
     t = gl.tree;
 
 #ifdef DEBUG
-    printf("[DEBUG]\tFind <%s> in gloabl tree\n", name);
+    printf("[DEBUG]\tFind <%s> in global tree\n", name);
     fflush(stdout);
 #endif
 
@@ -225,6 +247,22 @@ leaf* findInHierarchy(char* name)
             t = NULL;
     }
 
+    if (t != NULL)
+#ifdef DEBUG
+    {
+        printf("[DEBUG]\tfound <%s> in global tree\n", ((fs_file*)(t->data))->name);
+        fflush(stdout);
+#endif
+        ret = t;
+#ifdef DEBUG
+    }
+    else
+    {
+        printf("[DEBUG]\tdid not find <%s> in global tree\n", name);
+        fflush(stdout);
+    }
+#endif
+
     return ret;
 }
 
@@ -240,47 +278,77 @@ void addToHierarchy(fs_file* file)
     char* name;
     char* part;
     char delim[2];
-    leaf* pd; /* temp tree node (parent dir) */
+    leaf* l; /* temp tree node */
+    leaf** pd; /* temp tree node (parent dir) */
     int p; /* num path separations */
 
-    delim[0] = PATH_SEP;
-    delim[1] = '\0';
-    name = strdup(file->name);
-
-#ifdef DEBUG
-    printf("[DEBUG]\tAdding <%s> to the global tree\n", file->name);
-    fflush(stdout);
-#endif
-
-    if ((p = countPathSeparations(name)))
+    pd = NULL;
+    if (file != NULL)
     {
-        part = strtok(name, delim);
-        if (part == NULL)
-            part = delim;
-        pd = findInHierarchy(part);
-        while (p--)
-        {
-            part = strtok(NULL, delim);
-            if (p > 0)
-                pd = findInHierarchy(part);
-        }
+        delim[0] = PATH_SEP;
+        delim[1] = '\0';
+        name = strdup(file->name);
 
 #ifdef DEBUG
-        printf("[DEBUG]\t<%s> name shortened to <%s>\n", file->name, part);
+        printf("[DEBUG]\tAdding <%s> to the global tree\n", file->name);
         fflush(stdout);
 #endif
 
-        /* we're making the file name shorter so strcpy should be fine */
-        file->name = strcpy(file->name, part);
-        /* TODO: possible memory leak? */
+        if ((p = countPathSeparations(name)))
+        {
+            part = strtok(name, delim);
+            if (part == NULL) /* this is meant to cover '/' as the root */
+                part = delim;
+            if ((l = findInHierarchy(part)) != NULL)
+                pd = &l;
+            while (p--)
+            {
+                part = strtok(NULL, delim);
+                if (p > 0)
+                    if ((l = findInHierarchy(part)) != NULL)
+                        pd = &l;
+            }
+
+            if (pd == NULL)
+            {
+                fprintf(stderr, "%s: could not find directory\n", gl.executable);
+                fflush(stderr);
+
+                return;
+            }
+            else
+            {
+
+#ifdef DEBUG
+                printf("[DEBUG]\t<%s> name shortened to <%s> in parent dir <%s>\n",
+                        file->name, part, ((fs_file*)((*pd)->data))->name);
+                fflush(stdout);
+#endif
+
+                /* we're making the file name shorter so strcpy should be fine */
+                file->name = strcpy(file->name, part);
+
+#ifdef DEBUG
+                printf("[DEBUG]\tsanity check <%s>\n", file->name);
+                fflush(stdout);
+#endif
+                /* TODO: possible memory leak? */
+            }
+        }
+        else
+        {
+            if (gl.cur_dir != NULL)
+                pd = gl.cur_dir;
+            else
+                pd = &gl.tree;
+        }
+
+
+        free(name);
+
+        /* append to the tree */
+        appendLeaf(pd, createLeaf((void*)file));
     }
-    else
-        pd = gl.cur_dir;
-
-    free(name);
-
-    /* append to the tree */
-    appendLeaf(&pd, createLeaf((void*)file));
 }
 
 /* pre: takes in a char* 'fname' which is a file name

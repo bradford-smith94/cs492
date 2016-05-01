@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 04/30/2016
+ * 05/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -64,7 +64,7 @@ struct s_env {
     int numBlocks; /* total number of blocks (dsize/bsize) */
     node* ldisk; /* lined_list for disk blocks */
     leaf* tree; /* filesystem hierarchy */
-    leaf* cur_dir; /* pointer to the tree node for the current directory */
+    leaf** cur_dir; /* pointer to the tree node for the current directory */
 } gl;
 
 /* functions ================================================================ */

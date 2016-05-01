@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 init.c
- * 04/30/2016
+ * 05/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -24,6 +24,9 @@ void init()
 
     /* make sure gl.tree starts as NULL */
     gl.tree = NULL;
+
+    /* initialize gl.cur_dir to NULL until after directories and files */
+    gl.cur_dir = NULL;
 
     /* total number of blocks is disk size divided by block size */
     gl.numBlocks = gl.dsize / gl.bsize;
@@ -127,6 +130,6 @@ void init()
     }
 
     /* initialize gl.cur_dir to be the root of the tree */
-    gl.cur_dir = gl.tree;
+    gl.cur_dir = &gl.tree;
 }
 

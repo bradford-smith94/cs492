@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs_cd.c
- * 04/17/2016
+ * 05/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -12,5 +12,20 @@
  */
 void fs_cd(char* dir)
 {
+    leaf* l;
+
+    if (!strcmp(dir, ".."))
+    {
+    }
+    else
+    {
+        if ((l = findInHierarchy(dir)) != NULL)
+            gl.cur_dir = &l;
+        else
+        {
+            printf("%s: no such file or directory: %s\n", gl.executable, dir);
+            fflush(stdout);
+        }
+    }
 }
 
