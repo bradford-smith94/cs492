@@ -64,7 +64,7 @@ struct s_env {
     int numBlocks; /* total number of blocks (dsize/bsize) */
     node* ldisk; /* lined_list for disk blocks */
     leaf* tree; /* filesystem hierarchy */
-    leaf** cur_dir; /* pointer to the tree node for the current directory */
+    leaf* cur_dir; /* the tree node for the current directory */
 } gl;
 
 /* functions ================================================================ */

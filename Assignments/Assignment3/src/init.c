@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 init.c
- * 05/01/2016
+ * 05/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -132,7 +132,7 @@ void init()
     }
 
     /* initialize gl.cur_dir to be the root of the tree */
-    gl.cur_dir = &gl.tree;
+    gl.cur_dir = gl.tree;
 
 #ifdef DEBUG
     printf("[DEBUG]\tInitialization finished\n");

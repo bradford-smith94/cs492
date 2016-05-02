@@ -434,7 +434,7 @@ void addToHierarchy(fs_file* file)
         else
         {
             if (gl.cur_dir != NULL)
-                pd = gl.cur_dir;
+                pd = &gl.cur_dir;
             else
                 pd = &gl.tree;
         }

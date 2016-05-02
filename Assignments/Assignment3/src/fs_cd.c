@@ -16,8 +16,8 @@ void fs_cd(char* dir)
 
     if (!strcmp(dir, ".."))
     {
-        if ((l = findParentInHierarchy(*gl.cur_dir)) != NULL)
-            gl.cur_dir = &l;
+        if ((l = findParentInHierarchy(gl.cur_dir)) != NULL)
+            gl.cur_dir = l;
         else
         {
             printf("%s: no such file or directory: %s\n", gl.executable, dir);
@@ -26,8 +26,8 @@ void fs_cd(char* dir)
     }
     else
     {
-        if ((l = findInHierarchy(*gl.cur_dir, dir)) != NULL)
-            gl.cur_dir = &l;
+        if ((l = findInHierarchy(gl.cur_dir, dir)) != NULL)
+            gl.cur_dir = l;
         else
         {
             printf("%s: no such file or directory: %s\n", gl.executable, dir);
