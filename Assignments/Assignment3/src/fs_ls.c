@@ -12,15 +12,16 @@
 void fs_ls()
 {
     node* n;
+
     n = NULL;
     if ((n = gl.cur_dir->children) != NULL)
     {
         do
         {
-            if (((fs_file*)(n->data))->isDirectory)
-                printf("%s%c\n", ((fs_file*)(n->data))->name, PATH_SEP);
+            if (((fs_file*)(((leaf*)(n->data))->data))->isDirectory)
+                printf("%s%c\n", ((fs_file*)(((leaf*)(n->data))->data))->name, PATH_SEP);
             else
-                printf("%s\n", ((fs_file*)(n->data))->name);
+                printf("%s\n", ((fs_file*)(((leaf*)(n->data))->data))->name);
         }
         while ((n = n->next) != NULL);
         fflush(stdout);
