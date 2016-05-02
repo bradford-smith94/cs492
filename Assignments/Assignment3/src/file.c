@@ -464,3 +464,29 @@ int countPathSeparations(char* fname)
     return count;
 }
 
+/* pre: takes in a fs_file* 'file'
+ * post: build the full path name of 'file' from the gl.tree
+ * return: a char* that is the full path name of 'file'
+ */
+char* getFullPath(fs_file* file)
+{
+    char* ret;
+    leaf* t;
+    leaf* target;
+
+    ret = (char*)malloc(1024 * sizeof(char));
+
+    target = findInHierarchy(gl.tree, file->name);
+    sprintf(ret, "%s", file->name);
+
+    while ((t = findParentInHierarchy(target)) != NULL)
+    {
+        sprintf(ret, "%s%c%s",
+                ((fs_file*)(t->data))->name,
+                PATH_SEP,
+                ret);
+    }
+
+    return ret;
+}
+

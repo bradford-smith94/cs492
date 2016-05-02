@@ -85,6 +85,7 @@ leaf*       findInHierarchy(leaf*, char*);
 leaf*       findParentInHierarchy(leaf*);
 void        addToHierarchy(fs_file*);
 int         countPathSeparations(char*);
+char*       getFullPath(fs_file*);
 
 /* functions for handling user commands */
 void        fs_cd(char*);

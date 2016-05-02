@@ -1,6 +1,6 @@
 # Bradford Smith (bsmith8)
 # Makefile for CS 492 Assignment 3
-# 05/01/2016
+# 05/02/2016
 # "I pledge my honor that I have abided by the Stevens Honor System."
 ################################################################################
 
@@ -28,7 +28,7 @@ CFLAGS+= $(INCLPATH)
 CPPFLAGS+= -pedantic-errors -Wall
 DBFLGS= -g -DDEBUG
 
-all: $(OBJ) $(FILES) $(DIRS)
+all: $(OBJ) $(DIRS) $(FILES)
 	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $(PRG)
 
 # generate input files for the program

@@ -16,30 +16,30 @@ void fs_dir()
     fs_file* f; /* temp file */
     node* neighbors; /* linked_list to hold the order for BFS */
 
+    neighbors = NULL;
     t = gl.tree;
 
     while (t != NULL)
     {
+        f = (fs_file*)(t->data);
+        if (f->isDirectory)
+            printf("%s%c\n", getFullPath(f), PATH_SEP);
+        else
+            printf("%s\n", getFullPath(f));
+        fflush(stdout);
+
         if ((n = t->children) != NULL)
         {
             do /* add all children to the neighbors queue */
             {
                 appendNode(&neighbors, createNode(n->data));
-            }
-            while ((n = n->next) != NULL);
+            } while ((n = n->next) != NULL);
         }
 
         if ((n = popNode(&neighbors)) != NULL)
         {
             /* TODO: might be leaking memory from popping off of neighbors */
             t = (leaf*)(n->data);
-            f = (fs_file*)(t->data);
-
-            if (f->isDirectory)
-                printf("%s%c\n", f->name, PATH_SEP);
-            else
-                printf("%s\n", f->name);
-            fflush(stdout);
         }
         else
             t = NULL;
