@@ -16,7 +16,7 @@ void fs_cd(char* dir)
 
     if (!strcmp(dir, ".."))
     {
-        if ((l = findParentInHierarchy(gl.cur_dir)) != NULL)
+        if ((l = gl.cur_dir->parent) != NULL)
             gl.cur_dir = l;
         else
         {

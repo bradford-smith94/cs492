@@ -280,87 +280,6 @@ leaf* findInHierarchy(leaf* start, char* name)
     return ret;
 }
 
-/* pre: takes in a leaf* 'start', the data stored in the nodes of gl.tree must
- *      be of the type fs_file*
- * post: finds the the tree node in gl.tree that is the parent node of the node
- *      'start'
- * return: a leaf* that points to the node in gl.tree is the parent node of the
- *      node 'start', or NULL if such a node is not found
- */
-leaf* findParentInHierarchy(leaf* start)
-{
-    leaf* ret;
-    leaf* t; /* temp tree */
-    leaf* last;
-    node* n;
-    node* neighbors; /* linked_list to hold the order for BFS */
-
-    ret = NULL;
-    neighbors = NULL;
-    t = gl.tree;
-
-#if 0
-#ifdef DEBUG
-    printf("[DEBUG]\tFind <%s> in global tree\n", ((fs_file*)(start->data))->name);
-    fflush(stdout);
-#endif
-#endif
-
-    /* while node is not null and it's the node we're looking for */
-    while (t != NULL && t != start)
-    {
-#ifdef DEBUG
-        printf("[DEBUG]\tBFS working on <%s>\n", ((fs_file*)(t->data))->name);
-        fflush(stdout);
-#endif
-        if ((n = t->children) != NULL)
-        {
-            do /* add all children to the neighbors queue */
-            {
-#ifdef DEBUG
-                printf("[DEBUG]\tBFS found child <%s>\n",
-                        ((fs_file*)(((leaf*)(n->data))->data))->name);
-                fflush(stdout);
-#endif
-                appendNode(&neighbors, createNode(n->data));
-            } while ((n = n->next) != NULL);
-        }
-
-        if ((n = popNode(&neighbors)) != NULL)
-        {
-            last = t;
-            /* TODO: might be leaking memory from popping off of neighbors */
-            t = (leaf*)(n->data);
-#ifdef DEBUG
-            printf("[DEBUG]\tBFS popped <%s>\n", ((fs_file*)(t->data))->name);
-            fflush(stdout);
-#endif
-        }
-        else
-            t = NULL;
-    }
-
-    if (t != NULL)
-#ifdef DEBUG
-    {
-        printf("[DEBUG]\tfound <%s> in global tree\n", ((fs_file*)(t->data))->name);
-        fflush(stdout);
-#endif
-        ret = last;
-#ifdef DEBUG
-    }
-    else
-    {
-#if 0
-        printf("[DEBUG]\tdid not find <%s> in global tree\n", ((fs_file*)(start->data))->name);
-        fflush(stdout);
-#endif
-    }
-#endif
-
-    return ret;
-}
-
 /* pre: takes in a fs_file* 'file' which must be either a valid file or
  *      directory
  * post: adds 'file' to the appropriate position in gl.tree, if the name of
@@ -471,20 +390,43 @@ int countPathSeparations(char* fname)
 char* getFullPath(fs_file* file)
 {
     char* ret;
-    leaf* t;
+    char* parent;
     leaf* target;
 
-    ret = (char*)malloc(1024 * sizeof(char));
-
+    ret = (char*)malloc(1024*sizeof(char));
     target = findInHierarchy(gl.tree, file->name);
-    sprintf(ret, "%s", file->name);
 
-    while ((t = findParentInHierarchy(target)) != NULL)
+    if (target->parent != NULL)
     {
-        sprintf(ret, "%s%c%s",
-                ((fs_file*)(t->data))->name,
-                PATH_SEP,
-                ret);
+        /* TODO: probably leaking memory here */
+        parent = getFullPath((fs_file*)target->parent->data);
+        if (file->isDirectory)
+        {
+            sprintf(ret, "%s%s%c",
+                    parent,
+                    file->name,
+                    PATH_SEP);
+        }
+        else
+        {
+            sprintf(ret, "%s%s",
+                    parent,
+                    file->name);
+        }
+    }
+    else
+    {
+        if (file->isDirectory)
+        {
+            sprintf(ret, "%s%c",
+                    file->name,
+                    PATH_SEP);
+        }
+        else
+        {
+            sprintf(ret, "%s",
+                    file->name);
+        }
     }
 
     return ret;

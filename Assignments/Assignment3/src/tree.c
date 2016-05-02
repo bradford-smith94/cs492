@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 tree.c
- * 04/26/2016
+ * 05/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -20,6 +20,7 @@ leaf* createLeaf(void* data)
         if ((ret = (leaf*)malloc(sizeof(leaf))) != NULL)
         {
             ret->data = data;
+            ret->parent = NULL;
             ret->children = NULL;
         }
     }
@@ -38,6 +39,7 @@ void appendLeaf(leaf** tree, leaf* l)
             (*tree) = l;
         else
         {
+            l->parent = (*tree);
             appendNode(&((*tree)->children), createNode((void*)l));
         }
     }

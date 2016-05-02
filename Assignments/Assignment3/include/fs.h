@@ -82,7 +82,6 @@ void        splitLdiskNode(int);
 void        mergeLdiskNodes();
 void        allocateFile(fs_file*);
 leaf*       findInHierarchy(leaf*, char*);
-leaf*       findParentInHierarchy(leaf*);
 void        addToHierarchy(fs_file*);
 int         countPathSeparations(char*);
 char*       getFullPath(fs_file*);
