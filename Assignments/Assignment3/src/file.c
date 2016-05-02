@@ -251,7 +251,7 @@ leaf* findInHierarchy(leaf* start, char* name)
 
         if ((n = popNode(&neighbors)) != NULL)
         {
-            /* might be leaking memory from popping off of neighbors */
+            /* TODO: might be leaking memory from popping off of neighbors */
             t = (leaf*)(n->data);
 #ifdef DEBUG
             printf("[DEBUG]\tBFS popped <%s>\n", ((fs_file*)(t->data))->name);
@@ -330,7 +330,7 @@ leaf* findParentInHierarchy(leaf* start)
         if ((n = popNode(&neighbors)) != NULL)
         {
             last = t;
-            /* might be leaking memory from popping off of neighbors */
+            /* TODO: might be leaking memory from popping off of neighbors */
             t = (leaf*)(n->data);
 #ifdef DEBUG
             printf("[DEBUG]\tBFS popped <%s>\n", ((fs_file*)(t->data))->name);
