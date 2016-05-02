@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs.h
- * 05/01/2016
+ * 05/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -81,7 +81,8 @@ fs_file*    createFile(char*, int, char);
 void        splitLdiskNode(int);
 void        mergeLdiskNodes();
 void        allocateFile(fs_file*);
-leaf*       findInHierarchy(char*);
+leaf*       findInHierarchy(leaf*, char*);
+leaf*       findParentInHierarchy(leaf*);
 void        addToHierarchy(fs_file*);
 int         countPathSeparations(char*);
 
