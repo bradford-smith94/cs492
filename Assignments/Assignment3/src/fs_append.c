@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 fs_append.c
- * 04/17/2016
+ * 05/02/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -11,5 +11,17 @@
  */
 void fs_append(char* file, int bytes)
 {
+    leaf* target;
+
+    if (bytes < 0)
+    {
+        printf("usage: append name size\n");
+        fflush(stdout);
+    }
+    else if ((target = findInHierarchy(gl.tree, file)) != NULL)
+    {
+        ((fs_file*)(target->data))->size += bytes;
+        allocateFile((fs_file*)(target->data));
+    }
 }
 
