@@ -1,6 +1,6 @@
 /* Bradford Smith (bsmith8)
  * CS 492 Assignment 3 linked_list.c
- * 04/29/2016
+ * 05/01/2016
  * "I pledge my honor that I have abided by the Stevens Honor System."
  */
 
@@ -33,15 +33,17 @@ node* createNode(void* data)
  */
 void appendNode(node** list, node* n)
 {
+    node* tmp;
+
     if (n != NULL)
     {
         if ((*list) == NULL)
             (*list) = n;
         else
         {
-            for (; (*list)->next != NULL; list = &((*list)->next))
+            for (tmp = (*list); tmp->next != NULL; tmp = tmp->next)
                 ; /* note the empty loop */
-            (*list)->next = n;
+            tmp->next = n;
         }
     }
 }

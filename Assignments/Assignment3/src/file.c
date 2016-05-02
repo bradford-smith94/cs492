@@ -38,7 +38,7 @@ fs_file* createFile(char* name, int size, char isDirectory)
 
     if ((ret = (fs_file*)malloc(sizeof(fs_file))) != NULL)
     {
-        ret->name = name;
+        ret->name = strdup(name); /* make sure this gets freed */
         ret->size = size;
         ret->allocatedBlocks = 0; /* file hasn't been allocated yet */
         ret->timestamp = time(NULL);
@@ -221,6 +221,7 @@ leaf* findInHierarchy(char* name)
     node* neighbors; /* linked_list to hold the order for BFS */
 
     ret = NULL;
+    neighbors = NULL;
     t = gl.tree;
 
 #ifdef DEBUG
@@ -231,17 +232,31 @@ leaf* findInHierarchy(char* name)
     /* while node is not null and it's name doesn't match */
     while (t != NULL && strcmp(name, ((fs_file*)(t->data))->name))
     {
+#ifdef DEBUG
+        printf("[DEBUG]\tBFS working on <%s>\n", ((fs_file*)(t->data))->name);
+        fflush(stdout);
+#endif
         if ((n = t->children) != NULL)
         {
             do /* add all children to the neighbors queue */
             {
-                appendNode(&neighbors, n);
+#ifdef DEBUG
+                printf("[DEBUG]\tBFS found child <%s>\n",
+                        ((fs_file*)(((leaf*)(n->data))->data))->name);
+                fflush(stdout);
+#endif
+                appendNode(&neighbors, createNode(n->data));
             } while ((n = n->next) != NULL);
         }
 
         if ((n = popNode(&neighbors)) != NULL)
         {
+            /* might be leaking memory from popping off of neighbors */
             t = (leaf*)(n->data);
+#ifdef DEBUG
+            printf("[DEBUG]\tBFS popped <%s>\n", ((fs_file*)(t->data))->name);
+            fflush(stdout);
+#endif
         }
         else
             t = NULL;
@@ -309,7 +324,7 @@ void addToHierarchy(fs_file* file)
                         pd = &l;
             }
 
-            if (pd == NULL)
+            if (pd == NULL || (*pd) == NULL)
             {
                 fprintf(stderr, "%s: could not find directory\n", gl.executable);
                 fflush(stderr);

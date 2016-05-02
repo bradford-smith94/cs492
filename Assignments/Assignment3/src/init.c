@@ -74,7 +74,7 @@ void init()
         line[n - 1] = '\0';
 
 #ifdef DEBUG
-        printf("[DEBUG]\tfound directory: <%s>\n", line);
+        printf("[DEBUG]\tread in directory: <%s>\n", line);
         fflush(stdout);
 #endif
 
@@ -82,6 +82,7 @@ void init()
         addToHierarchy(createFile(line, 0, 1));
 
         free(line);
+        line = NULL;
         s = 0;
     }
 
@@ -111,7 +112,7 @@ void init()
         vect = str2vect(line);
 
 #ifdef DEBUG
-        printf("[DEBUG]\tfound file entry:\n\t");
+        printf("[DEBUG]\tread in file entry:");
         for (int i = 0; vect[i] != NULL; i++)
             printf("<%s>,", vect[i]);
         printf("\n");
@@ -126,10 +127,16 @@ void init()
 
         free_vect(vect);
         free(line);
+        line = NULL;
         s = 0;
     }
 
     /* initialize gl.cur_dir to be the root of the tree */
     gl.cur_dir = &gl.tree;
+
+#ifdef DEBUG
+    printf("[DEBUG]\tInitialization finished\n");
+    fflush(stdout);
+#endif
 }
 
