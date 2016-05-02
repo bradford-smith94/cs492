@@ -22,6 +22,10 @@ void init()
     FILE* file_stream;
     fs_file* f; /* temp file */
 
+#ifdef DEBUG
+    int i;
+#endif
+
     /* make sure gl.tree starts as NULL */
     gl.tree = NULL;
 
@@ -113,7 +117,7 @@ void init()
 
 #ifdef DEBUG
         printf("[DEBUG]\tread in file entry:");
-        for (int i = 0; vect[i] != NULL; i++)
+        for (i = 0; vect[i] != NULL; i++)
             printf("<%s>,", vect[i]);
         printf("\n");
         fflush(stdout);
