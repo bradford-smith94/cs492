@@ -148,8 +148,7 @@ void allocateFile(fs_file* file)
             fprintf(stderr, "%s: Out of space\n", gl.executable);
             fflush(stderr);
 
-            /* TODO: not sure if this error is fatal, break if not fatal */
-            exit(-1);
+            break;
         }
         else
         {
