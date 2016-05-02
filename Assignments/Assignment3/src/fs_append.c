@@ -18,10 +18,15 @@ void fs_append(char* file, int bytes)
         printf("usage: append name size\n");
         fflush(stdout);
     }
-    else if ((target = findInHierarchy(gl.tree, file)) != NULL)
+    else if ((target = findInHierarchy(gl.cur_dir, file)) != NULL)
     {
         ((fs_file*)(target->data))->size += bytes;
         allocateFile((fs_file*)(target->data));
+    }
+    else if (target == NULL)
+    {
+        printf("%s: append: no such file or directory: %s\n", gl.executable, file);
+        fflush(stdout);
     }
 }
 

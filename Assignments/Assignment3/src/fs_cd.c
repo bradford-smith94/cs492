@@ -20,7 +20,7 @@ void fs_cd(char* dir)
             gl.cur_dir = l;
         else
         {
-            printf("%s: no such file or directory: %s\n", gl.executable, dir);
+            printf("%s: cd: no such file or directory: %s\n", gl.executable, dir);
             fflush(stdout);
         }
     }
@@ -30,7 +30,7 @@ void fs_cd(char* dir)
             gl.cur_dir = l;
         else
         {
-            printf("%s: no such file or directory: %s\n", gl.executable, dir);
+            printf("%s: cd: no such file or directory: %s\n", gl.executable, dir);
             fflush(stdout);
         }
     }
