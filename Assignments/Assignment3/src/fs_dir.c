@@ -22,10 +22,7 @@ void fs_dir()
     while (t != NULL)
     {
         f = (fs_file*)(t->data);
-        if (f->isDirectory)
-            printf("%s%c\n", getFullPath(f), PATH_SEP);
-        else
-            printf("%s\n", getFullPath(f));
+        printf("%s\n", getFullPath(f));
         fflush(stdout);
 
         if ((n = t->children) != NULL)
