@@ -20,9 +20,13 @@ void fs_append(char* file, int bytes)
     }
     else if ((target = findInHierarchy(gl.cur_dir, file)) != NULL)
     {
-        ((fs_file*)(target->data))->size += bytes;
-        allocateFile((fs_file*)(target->data));
-        ((fs_file*)(target->data))->timestamp = time(NULL);
+        /* only append to regular files */
+        if (!(((fs_file*)(target->data))->isDirectory))
+        {
+            ((fs_file*)(target->data))->size += bytes;
+            allocateFile((fs_file*)(target->data));
+            ((fs_file*)(target->data))->timestamp = time(NULL);
+        }
     }
     else if (target == NULL)
     {

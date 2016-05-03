@@ -22,10 +22,11 @@ void fs_prfiles()
     while (t != NULL)
     {
         f = (fs_file*)(t->data);
-        printf("%s\t%d blocks\t%d bytes\n",
+        printf("%s\t%d blocks\t%d bytes\t%ld timestamp\n",
                 getFullPath(f),
                 f->allocatedBlocks,
-                f->size);
+                f->size,
+                f->timestamp);
         printf("\tBlock addresses: ");
         for (n = f->lfile; n != NULL; n = n->next)
         {
