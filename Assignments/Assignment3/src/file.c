@@ -70,11 +70,20 @@ void splitLdiskNode(int index)
     else
     {
         /* while node is not NULL and index is not in this block */
-        while (n != NULL && !(index < b->e_addr && index >= b->s_addr))
-            n = n->next;
+        for (; n != NULL; n = n->next)
+        {
+            b = (fs_block*)(n->data);
+            if (index < b->e_addr && index >= b->s_addr)
+                break;
+        }
 
         if (n != NULL)
         {
+#ifdef DEBUG
+            printf("[DEBUG]\t next free node is block %d\n",
+                    ((fs_block*)(n->data))->s_addr);
+            fflush(stdout);
+#endif
             insertNode(n, createNode((void*)createBlock(index, b->e_addr, 1)));
             b->e_addr = index;
             b->isFree = 0;

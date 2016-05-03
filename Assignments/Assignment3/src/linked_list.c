@@ -54,7 +54,7 @@ void appendNode(node** list, node* n)
 void prependNode(node** list, node* n)
 {
     n->next = (*list);
-    list = &n;
+    (*list) = n;
 }
 
 /* pre: takes in a node* 'first' and a node* 'second'
