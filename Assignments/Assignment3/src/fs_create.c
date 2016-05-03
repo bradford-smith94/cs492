@@ -19,7 +19,5 @@ void fs_create(char* name)
     }
     else
         addToHierarchy(createFile(name, 0, 0));
-
-    /* TODO: update parent directory timestamp? */
 }
 

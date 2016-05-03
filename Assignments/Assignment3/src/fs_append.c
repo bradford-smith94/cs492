@@ -22,6 +22,7 @@ void fs_append(char* file, int bytes)
     {
         ((fs_file*)(target->data))->size += bytes;
         allocateFile((fs_file*)(target->data));
+        ((fs_file*)(target->data))->timestamp = time(NULL);
     }
     else if (target == NULL)
     {
