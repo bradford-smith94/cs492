@@ -122,7 +122,7 @@ void allocateFile(fs_file* file)
     fs_block* b; /* temp block */
     node* n; /* temp node */
 
-    numBlocksNeeded = file->size / gl.bsize;
+    numBlocksNeeded = (file->size / gl.bsize) - file->allocatedBlocks;
     n = gl.ldisk;
 
 #ifdef DEBUG
@@ -132,7 +132,7 @@ void allocateFile(fs_file* file)
 #endif
 
     /* only allocate if the number of needed blocks has changed */
-    while (numBlocksNeeded > file->allocatedBlocks)
+    while (numBlocksNeeded > 0)
     {
 #ifdef DEBUG
         printf("[DEBUG]\tAllocated %d blocks so far\n", file->allocatedBlocks);
@@ -178,6 +178,7 @@ void allocateFile(fs_file* file)
 
                 /* update gl.ldisk */
                 splitLdiskNode(b->s_addr + numBlocksNeeded);
+                numBlocksNeeded -= numBlocksNeeded;
             }
             else /* else the whole node is needed */
             {
@@ -186,6 +187,7 @@ void allocateFile(fs_file* file)
                 fflush(stdout);
 #endif
                 file->allocatedBlocks += b->e_addr - b->s_addr;
+                numBlocksNeeded -= b->e_addr - b->s_addr;
 
                 /* update file->lfile */
                 for (i = b->s_addr; i < b->e_addr; i++)
